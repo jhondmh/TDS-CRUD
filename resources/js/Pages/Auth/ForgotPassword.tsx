@@ -29,9 +29,7 @@ export default function ForgotPassword({ status }: Props) {
       <Head title="Forgot Password" />
 
       <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        Forgot your password? No problem. Just let us know your email address
-        and we will email you a password reset link that will allow you to
-        choose a new one.
+        ¿Ha olvidado su contraseña? No se preocupe. Indíquenos su dirección de correo electrónico y le enviaremos un enlace para restablecer la contraseña que le permitirá elegir una nueva.
       </div>
 
       {status && (
@@ -60,7 +58,7 @@ export default function ForgotPassword({ status }: Props) {
             className={classNames({ 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Email Password Reset Link
+            Enviar enlace
           </PrimaryButton>
         </div>
       </form>

@@ -41,18 +41,16 @@ export default function DeleteUserForm() {
 
 	return (
 		<ActionSection
-			title={'Delete Account'}
-			description={'Permanently delete your account.'}
+			title={'Eliminar cuenta'}
+			description={'Elimine permanentemente su cuenta.'}
 		>
 			<div className="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-				Once your account is deleted, all of its resources and data will
-				be permanently deleted. Before deleting your account, please
-				download any data or information that you wish to retain.
+				Una vez eliminada su cuenta, todos sus recursos y datos serán se eliminarán de forma permanente. Antes de eliminar su cuenta, por favor descargue cualquier dato o información que desee conservar.
 			</div>
 
 			<div className="mt-5">
 				<DangerButton onClick={confirmUserDeletion}>
-					Delete Account
+					Eliminar cuenta
 				</DangerButton>
 			</div>
 
@@ -60,21 +58,18 @@ export default function DeleteUserForm() {
 			<Modal
 				opened={confirmingUserDeletion}
 				onClose={closeModal}
-				title={'Delete Account'}
+				title={'Eliminar cuenta'}
 				size="lg"
 			>
 				{/* <DialogModal.Content title={'Delete Account'}> */}
 				<div className='px-6'>
-					Are you sure you want to delete your account? Once your
-					account is deleted, all of its resources and data will be
-					permanently deleted. Please enter your password to confirm
-					you would like to permanently delete your account.
+					¿Está seguro de que desea eliminar su cuenta? Una vez eliminada su cuenta, todos sus recursos y datos se borrarán permanentemente. Por favor, introduzca su contraseña para confirmar que desea eliminar permanentemente su cuenta.
 				</div>
 				<div className="mt-4 px-6">
 					<TextInput
 						type="password"
 						className="mt-1 block w-full"
-						placeholder="Password"
+						placeholder="Contraseña"
 						value={form.data.password}
 						onChange={e =>
 							form.setData('password', e.currentTarget.value)
@@ -91,7 +86,7 @@ export default function DeleteUserForm() {
 				{/* <DialogModal.Footer> */}
 				<div className="mt-6 px-6 flex justify-end">
 					<SecondaryButton onClick={closeModal}>
-						Cancel
+						Cancelar
 					</SecondaryButton>
 					<DangerButton
 						onClick={deleteUser}
@@ -100,7 +95,7 @@ export default function DeleteUserForm() {
 						})}
 						disabled={form.processing}
 					>
-						Delete Account
+						Eliminar cuenta
 					</DangerButton>
 					{/* </DialogModal.Footer> */}
 				</div>

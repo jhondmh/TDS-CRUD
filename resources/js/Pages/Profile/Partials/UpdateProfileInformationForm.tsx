@@ -81,8 +81,8 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 	return (
 		<FormSection
 			onSubmit={updateProfileInformation}
-			title={'Profile Information'}
-			description={`Update your account's profile information and email address.`}
+			title={'Información de Perfil'}
+			description={`Actualice la información de perfil y la dirección de correo electrónico de su cuenta.`}
 			renderActions={() => (
 				<>
 					<ActionMessage
@@ -98,7 +98,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 						})}
 						disabled={form.processing}
 					>
-						Save
+						Guardar
 					</PrimaryButton>
 				</>
 			)}
@@ -164,7 +164,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 
 			{/* <!-- Name --> */}
 			<div className="col-span-6 sm:col-span-4">
-				<InputLabel htmlFor="name" value="Name" />
+				<InputLabel htmlFor="name" value="Nombres" />
 				<TextInput
 					id="name"
 					type="text"

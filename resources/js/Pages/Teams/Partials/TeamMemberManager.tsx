@@ -139,9 +139,9 @@ export default function TeamMemberManager({
 					{/* <!-- Add Team Member --> */}
 					<FormSection
 						onSubmit={addTeamMember}
-						title={'Add Team Member'}
+						title={'Agregar nuevo miembro de equipo'}
 						description={
-							'Add a new team member to your team, allowing them to collaborate with you.'
+							'Añade un nuevo miembro a tu equipo para que pueda colaborar contigo.'
 						}
 						renderActions={() => (
 							<>
@@ -166,8 +166,7 @@ export default function TeamMemberManager({
 					>
 						<div className="col-span-6">
 							<div className="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-								Please provide the email address of the person
-								you would like to add to this team.
+								Indique la dirección de correo electrónico de la persona que desea añadir a este equipo.
 							</div>
 						</div>
 
@@ -195,7 +194,7 @@ export default function TeamMemberManager({
 						{/* <!-- Role --> */}
 						{availableRoles.length > 0 ? (
 							<div className="col-span-6 lg:col-span-4">
-								<InputLabel htmlFor="roles" value="Role" />
+								<InputLabel htmlFor="roles" value="Rol" />
 								<InputError
 									message={addTeamMemberForm.errors.role}
 									className="mt-2"

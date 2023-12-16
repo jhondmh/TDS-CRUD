@@ -48,17 +48,13 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 
 	return (
 		<ActionSection
-			title={'Browser Sessions'}
+			title={'Sesiones de navegación'}
 			description={
-				'Manage and log out your active sessions on other browsers and devices.'
+				'Gestione y cierre sus sesiones activas en otros navegadores y dispositivos.'
 			}
 		>
 			<div className="max-w-xl text-sm text-gray-600 dark:text-gray-400">
-				If necessary, you may log out of all of your other browser
-				sessions across all of your devices. Some of your recent
-				sessions are listed below; however, this list may not be
-				exhaustive. If you feel your account has been compromised, you
-				should also update your password.
+				Si es necesario, puede cerrar todas sus sesiones de navegación en todos sus dispositivos. A continuación se enumeran algunas de sus sesiones recientes; sin embargo, esta lista puede no ser exhaustiva. Si cree que su cuenta se ha visto comprometida, actualice también su contraseña.
 			</div>
 
 			{/* <!-- Other Browser Sessions --> */}
@@ -135,7 +131,7 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 
 			<div className="flex items-center mt-5">
 				<PrimaryButton onClick={confirmLogout}>
-					Log Out Other Browser Sessions
+					Cerrar otras sesiones del navegador
 				</PrimaryButton>
 
 				<ActionMessage on={form.recentlySuccessful} className="ml-3">
@@ -147,20 +143,18 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 			<Modal
 				opened={confirmingLogout}
 				onClose={closeModal}
-				title={'Log Out Other Browser Sessions'}
+				title={'Cerrar otras sesiones del navegador'}
 				size="lg"
 			>
 				{/* <DialogModal.Content title={'Log Out Other Browser Sessions'}> */}
 				<div className='px-6'>
-					Please enter your password to confirm you would like to log
-					out of your other browser sessions across all of your
-					devices.
+					Introduzca su contraseña para confirmar que desea cerrar la sesión sesiones de navegación en todos sus dispositivos. dispositivos.
 				</div>
 				<div className="mt-4 px-6">
 					<TextInput
 						type="password"
 						className="mt-1 block w-full"
-						placeholder="Password"
+						placeholder="Contraseña"
 						ref={passwordRef}
 						value={form.data.password}
 						onChange={e =>
@@ -178,7 +172,7 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 				{/* <DialogModal.Footer> */}
 				<div className="mt-6 px-6 flex justify-end">
 					<SecondaryButton onClick={closeModal}>
-						Cancel
+						Cancelar
 					</SecondaryButton>
 
 					<PrimaryButton
@@ -188,7 +182,7 @@ export default function LogoutOtherBrowserSessions({ sessions }: Props) {
 						})}
 						disabled={form.processing}
 					>
-						Log Out Other Browser Sessions
+						Cerrar otras sesiones del navegador
 					</PrimaryButton>
 					{/* </DialogModal.Footer> */}
 				</div>

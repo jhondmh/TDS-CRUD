@@ -42,9 +42,9 @@ export default function UpdatePasswordForm() {
 	return (
 		<FormSection
 			onSubmit={updatePassword}
-			title={'Update Password'}
+			title={'Actualizar contraseña'}
 			description={
-				'Ensure your account is using a long, random password to stay secure.'
+				'Asegúrate de que tu cuenta utiliza una contraseña larga y aleatoria para mantener la seguridad.'
 			}
 			renderActions={() => (
 				<>
@@ -61,14 +61,14 @@ export default function UpdatePasswordForm() {
 						})}
 						disabled={form.processing}
 					>
-						Save
+						Guardar
 					</PrimaryButton>
 				</>
 			)}
 		>
 			<div className="col-span-6 sm:col-span-4">
 				<InputLabel htmlFor="current_password">
-					Current Password
+					Contraseña actual
 				</InputLabel>
 				<TextInput
 					id="current_password"
@@ -89,7 +89,7 @@ export default function UpdatePasswordForm() {
 			</div>
 
 			<div className="col-span-6 sm:col-span-4">
-				<InputLabel htmlFor="password">New Password</InputLabel>
+				<InputLabel htmlFor="password">Nueva contraseña</InputLabel>
 				<TextInput
 					id="password"
 					type="password"
@@ -107,7 +107,7 @@ export default function UpdatePasswordForm() {
 
 			<div className="col-span-6 sm:col-span-4">
 				<InputLabel htmlFor="password_confirmation">
-					Confirm Password
+					Confirmar contraseña
 				</InputLabel>
 				<TextInput
 					id="password_confirmation"

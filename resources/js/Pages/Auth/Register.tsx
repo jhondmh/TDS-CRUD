@@ -38,7 +38,7 @@ export default function Register() {
 					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
 					<TextInput
 						id="name"
-                        label="Name"
+                        label="Nombres"
 						type="text"
 						className="mt-1 block w-full"
 						value={form.data.name}
@@ -72,7 +72,7 @@ export default function Register() {
 					{/* <InputLabel htmlFor="password">Password</InputLabel> */}
 					<TextInput
 						id="password"
-                        label="Password"
+                        label="Contraseña"
 						type="password"
 						className="mt-1 block w-full"
 						value={form.data.password}
@@ -94,7 +94,7 @@ export default function Register() {
 					</InputLabel> */}
 					<TextInput
 						id="password_confirmation"
-                        label="Confirm Password"
+                        label="Confirmar contraseña"
 						type="password"
 						className="mt-1 block w-full"
 						value={form.data.password_confirmation}
@@ -162,7 +162,7 @@ export default function Register() {
 						href={route('login')}
 						className="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
 					>
-						Already registered?
+						¿Ya se ha registrado?
 					</Link>
 
 					<PrimaryButton
@@ -171,7 +171,7 @@ export default function Register() {
 						})}
 						disabled={form.processing}
 					>
-						Register
+						Registrarse
 					</PrimaryButton>
 				</div>
 			</form>

@@ -97,7 +97,7 @@ export default function TwoFactorChallenge() {
             className={classNames('ml-4', { 'opacity-25': form.processing })}
             disabled={form.processing}
           >
-            Log in
+            Iniciar sesión
           </PrimaryButton>
         </div>
       </form>

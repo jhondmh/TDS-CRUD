@@ -108,9 +108,9 @@ export default function TwoFactorAuthenticationForm({
 
   return (
     <ActionSection
-      title={'Two Factor Authentication'}
+      title={'Autenticación de dos factores'}
       description={
-        'Add additional security to your account using two factor authentication.'
+        'Añada seguridad adicional a su cuenta mediante la autenticación de dos factores.'
       }
     >
       {(() => {
@@ -130,16 +130,14 @@ export default function TwoFactorAuthenticationForm({
         }
         return (
           <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            You have not enabled two factor authentication.
+            No ha activado la autenticación de dos factores.
           </h3>
         );
       })()}
 
       <div className="mt-3 max-w-xl text-sm text-gray-600 dark:text-gray-400">
         <p>
-          When two factor authentication is enabled, you will be prompted for a
-          secure, random token during authentication. You may retrieve this
-          token from your phone's Google Authenticator application.
+          Cuando la autenticación de dos factores está activada, se te pedirá un token seguro y aleatorio durante la autenticación. Puede recuperar este token desde la aplicación Google Authenticator de su teléfono.
         </p>
       </div>
 
@@ -284,7 +282,7 @@ export default function TwoFactorAuthenticationForm({
                 className={classNames({ 'opacity-25': enabling })}
                 disabled={enabling}
               >
-                Enable
+                Habilitar
               </PrimaryButton>
             </ConfirmsPassword>
           </div>

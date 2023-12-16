@@ -131,7 +131,7 @@ export default function AppLayout({
 													.hasTeamFeatures ? (
 													<>
 														<div className="block px-4 py-2 text-xs text-gray-400">
-															Manage Team
+															Administrar equipo
 														</div>
 
 														{/* <!-- Team Settings --> */}
@@ -146,7 +146,7 @@ export default function AppLayout({
 																],
 															)}
 														>
-															Team Settings
+															Configuraciones de equipo
 														</DropdownLink>
 
 														{page.props.jetstream
@@ -156,7 +156,7 @@ export default function AppLayout({
 																	'teams.create',
 																)}
 															>
-																Create New Team
+																Crear nuevo equipo
 															</DropdownLink>
 														) : null}
 
@@ -164,7 +164,7 @@ export default function AppLayout({
 
 														{/* <!-- Team Switcher --> */}
 														<div className="block px-4 py-2 text-xs text-gray-400">
-															Switch Teams
+															Cambiar de equipo
 														</div>
 
 														{page.props.auth.user?.all_teams?.map(
@@ -268,13 +268,13 @@ export default function AppLayout({
 									>
 										{/* <!-- Account Management --> */}
 										<div className="block px-4 py-2 text-xs text-gray-400">
-											Manage Account
+											Administrar cuenta
 										</div>
 
 										<DropdownLink
 											href={route('profile.show')}
 										>
-											Profile
+											Perfil
 										</DropdownLink>
 
 										{page.props.jetstream.hasApiFeatures ? (
@@ -290,7 +290,7 @@ export default function AppLayout({
 										{/* <!-- Authentication --> */}
 										<form onSubmit={logout}>
 											<DropdownLink as="button">
-												Log Out
+												Cerrar sesión
 											</DropdownLink>
 										</form>
 									</Dropdown>
@@ -397,7 +397,7 @@ export default function AppLayout({
 									href={route('profile.show')}
 									active={route().current('profile.show')}
 								>
-									Profile
+									Perfil
 								</ResponsiveNavLink>
 
 								{page.props.jetstream.hasApiFeatures ? (
@@ -414,7 +414,7 @@ export default function AppLayout({
 								{/* <!-- Authentication --> */}
 								<form method="POST" onSubmit={logout}>
 									<ResponsiveNavLink as="button">
-										Log Out
+										Cerrar sesión
 									</ResponsiveNavLink>
 								</form>
 
@@ -424,7 +424,7 @@ export default function AppLayout({
 										<div className="border-t border-gray-200 dark:border-gray-600"></div>
 
 										<div className="block px-4 py-2 text-xs text-gray-400">
-											Manage Team
+											Administrar equipo
 										</div>
 
 										{/* <!-- Team Settings --> */}
@@ -437,7 +437,7 @@ export default function AppLayout({
 												'teams.show',
 											)}
 										>
-											Team Settings
+											Configuraciones de equipo
 										</ResponsiveNavLink>
 
 										{page.props.jetstream.canCreateTeams ? (
@@ -447,7 +447,7 @@ export default function AppLayout({
 													'teams.create',
 												)}
 											>
-												Create New Team
+												Crear nuevo equipo
 											</ResponsiveNavLink>
 										) : null}
 
@@ -455,7 +455,7 @@ export default function AppLayout({
 
 										{/* <!-- Team Switcher --> */}
 										<div className="block px-4 py-2 text-xs text-gray-400">
-											Switch Teams
+											Cambiar de equipo
 										</div>
 										{page.props.auth.user?.all_teams?.map(
 											team => (

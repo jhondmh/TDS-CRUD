@@ -34,7 +34,8 @@ class GoogleController extends Controller
                 ]);
 
                 // Crear un nuevo equipo para el usuario
-                $team = app(CreateTeam::class)->create($newUser, ['name' => $user->name . "'s Team"]);
+                // $team = app(CreateTeam::class)->create($newUser, ['name' => $user->name . "'s Team"]);
+                $team = app(CreateTeam::class)->create($newUser, ['name' => 'Equipo de ' . explode(' ', $user->name, 2)[0]]);
 
                 Auth::login($newUser);
                 return redirect()->intended('/dashboard');
