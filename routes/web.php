@@ -39,11 +39,20 @@ Route::middleware([
 
     Route::resource('estudiantes', EstudiantesController::class);
 
+    // Route::delete('/user', function () {
+    //     request()->user()->delete();
+    //     return response()->json(['status' => 'success']);
+    // })->middleware(['auth:sanctum', 'verified'])->name('current-user.destroy');
+    Route::delete('/user', function () {
+        request()->user()->delete();
+        // Redirigir al usuario a la página de inicio de sesión o a una página de confirmación
+        return Inertia::location(url('/'));
+    })->middleware(['auth:sanctum', 'verified'])->name('current-user.destroy');
 });
 
-route::get('auth/google',[GoogleController::class,'googlepage']);
-route::get('auth/google/callback',[GoogleController::class,'googlecallback']);
+route::get('auth/google', [GoogleController::class, 'googlepage']);
+route::get('auth/google/callback', [GoogleController::class, 'googlecallback']);
 
 
-route::get('auth/facebook',[FacebookController::class,'facebookpage']);
-route::get('auth/facebook/callback',[FacebookController::class,'facebookredirect']);
+route::get('auth/facebook', [FacebookController::class, 'facebookpage']);
+route::get('auth/facebook/callback', [FacebookController::class, 'facebookredirect']);
