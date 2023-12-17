@@ -33,11 +33,115 @@ import {
 	Indicator,
 	Table,
 	ScrollArea,
+	UnstyledButton,
+	Group,
+	Text,
+	Center,
+	keys,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import { IconCalendar } from '@tabler/icons-react';
+import {
+	IconCalendar,
+	IconSelector,
+	IconChevronDown,
+	IconChevronUp,
+	IconSearch,
+} from '@tabler/icons-react';
 
+import classes from '../../../css/TableSort.module.css';
 import TableScrollAreaClasses from '../../../css/TableScrollArea.module.css';
+
+interface RowData {
+	nombre: string;
+	apellido_pat: string;
+	apellido_mat: string;
+}
+
+interface ThProps {
+	children: React.ReactNode;
+	reversed: boolean;
+	sorted: boolean;
+	onSort(): void;
+}
+
+function Th({ children, reversed, sorted, onSort }: ThProps) {
+	const Icon = sorted
+		? reversed
+			? IconChevronUp
+			: IconChevronDown
+		: IconSelector;
+	return (
+		<Table.Th className={classes.th}>
+			<UnstyledButton onClick={onSort} className={classes.control}>
+				<Group justify="space-between">
+					<Text fw={500} fz="sm">
+						{children}
+					</Text>
+					<Center className={classes.icon}>
+						<Icon
+							style={{ width: rem(16), height: rem(16) }}
+							stroke={1.5}
+						/>
+					</Center>
+				</Group>
+			</UnstyledButton>
+		</Table.Th>
+	);
+}
+
+// function filterData(data: RowData[], search: string) {
+// 	const query = search.toLowerCase().trim();
+// 	return data.filter(item =>
+// 		keys(data[0]).some(key => item[key].toLowerCase().includes(query)),
+// 	);
+// }
+
+// function filterData(data: RowData[], search: string) {
+//   const query = search.toLowerCase().trim();
+//   return data.filter(item =>
+//     keys(data[0]).some(key =>
+//       String(item[key]).toLowerCase().includes(query)
+//     ),
+//   );
+// }
+
+function filterData(data: RowData[], search: string) {
+	const query = search.toLowerCase().trim();
+	if (data.length === 0) {
+		return []; // Retorna un arreglo vacío si no hay datos
+	}
+	return data.filter(item =>
+		Object.keys(data[0]).some(key =>
+			String(item[key]).toLowerCase().includes(query),
+		),
+	);
+}
+
+function sortData(
+	data: RowData[],
+	payload: {
+		sortBy: keyof RowData | null;
+		reversed: boolean;
+		search: string;
+	},
+) {
+	const { sortBy } = payload;
+
+	if (!sortBy) {
+		return filterData(data, payload.search);
+	}
+
+	return filterData(
+		[...data].sort((a, b) => {
+			if (payload.reversed) {
+				return b[sortBy].localeCompare(a[sortBy]);
+			}
+
+			return a[sortBy].localeCompare(b[sortBy]);
+		}),
+		payload.search,
+	);
+}
 
 export default function Dashboard(props) {
 	const route = useRoute();
@@ -238,7 +342,45 @@ export default function Dashboard(props) {
 			});
 	};
 
-	const rows = props.estudiantes.map((estudiante, i) => (
+	const [search, setSearch] = useState('');
+	const [sortedData, setSortedData] = useState(props.estudiantes);
+	const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
+	const [reverseSortDirection, setReverseSortDirection] = useState(false);
+
+	//Uso de effect para mantener el ordenamiento de columnas y a la vez recoger datos de forma dinámica
+	useEffect(() => {
+		setSortedData(
+			sortData(props.estudiantes, {
+				sortBy,
+				reversed: reverseSortDirection,
+				search,
+			}),
+		);
+	}, [props.estudiantes, sortBy, reverseSortDirection, search]);
+
+	const setSorting = (field: keyof RowData) => {
+		const reversed = field === sortBy ? !reverseSortDirection : false;
+		setReverseSortDirection(reversed);
+		setSortBy(field);
+		setSortedData(
+			sortData(props.estudiantes, { sortBy: field, reversed, search }),
+		);
+	};
+
+	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = event.currentTarget;
+		setSearch(value);
+		setSortedData(
+			sortData(props.estudiantes, {
+				sortBy,
+				reversed: reverseSortDirection,
+				search: value,
+			}),
+		);
+		// setSortedData(prevData => [...prevData, nuevoEstudiante]);
+	};
+
+	const rows = sortedData.map((estudiante, i) => (
 		<Table.Tr key={estudiante.id}>
 			<Table.Td>{i + 1}</Table.Td>
 			<Table.Td>{estudiante.nombre}</Table.Td>
@@ -290,7 +432,7 @@ export default function Dashboard(props) {
 				</h2>
 			)}
 		>
-			<div className="bg-dark grid v-screen place-items-center">
+			<div className="bg-dark grid v-screen place-items-center pt-6">
 				<div className="mt-3 mb-3 flex justify-end">
 					<PrimaryButton onClick={() => openModal(1)}>
 						<i className="fa-solid fa-circle-plus mr-2"></i>
@@ -298,7 +440,7 @@ export default function Dashboard(props) {
 					</PrimaryButton>
 				</div>
 			</div>
-			<div className="overflow-auto bg-dark grid v-screen place-items-center py-6 dark:bg-gray-900">
+			<div className="overflow-auto bg-dark grid v-screen place-items-center pb-6 dark:bg-gray-900">
 				{/* <table className="table-auto border border-gray-400 dark:border-gray-700 text-black mx-2"> */}
 				{/* <ScrollArea w={700} h={600} > */}
 				<ScrollArea
@@ -309,24 +451,54 @@ export default function Dashboard(props) {
 					scrollbarSize={6}
 					classNames={TableScrollAreaClasses}
 				>
+					<div className="mt-6 mx-16">
+						<TextInput
+							placeholder="Buscar por cualquier campo"
+							mb="md"
+							leftSection={
+								<IconSearch
+									style={{ width: rem(16), height: rem(16) }}
+									stroke={1.5}
+								/>
+							}
+							value={search}
+							onChange={handleSearchChange}
+						/>
+					</div>
+
 					{/* <Table.ScrollContainer minWidth={500}> */}
 					<Table highlightOnHover>
-						<Table.Thead
+						{/* <Table.Thead
 							className={cx(TableScrollAreaClasses.header, {
 								[TableScrollAreaClasses.scrolled]: scrolled,
 							})}
-						>
-							<Table.Tr className="bg-gray-100 dark:bg-gray-800 dark:text-white">
+						> */}
+
+						<Table.Tbody>
+							<Table.Tr>
 								<Table.Th className="px-2 py-2">#</Table.Th>
-								<Table.Th className="px-2 py-2">
+								<Th
+									sorted={sortBy === 'nombre'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('nombre')}
+								>
 									Nombres
-								</Table.Th>
-								<Table.Th className="px-2 py-2">
+								</Th>
+								<Th
+									sorted={sortBy === 'apellido_pat'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('apellido_pat')}
+								>
 									Apellido Paterno
-								</Table.Th>
-								<Table.Th className="px-2 py-2">
+								</Th>
+								<Th
+									sorted={sortBy === 'apellido_mat'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('apellido_mat')}
+								>
 									Apellido Materno
-								</Table.Th>
+								</Th>
+
 								<Table.Th className="px-2 py-2">
 									Fecha de Nacimiento
 								</Table.Th>
@@ -337,8 +509,61 @@ export default function Dashboard(props) {
 									Eliminar
 								</Table.Th>
 							</Table.Tr>
-						</Table.Thead>
-						<Table.Tbody>{rows}</Table.Tbody>
+						</Table.Tbody>
+
+						{/* <Table.Tr className="bg-gray-100 dark:bg-gray-800 dark:text-white">
+							<Table.Th className="px-2 py-2">#</Table.Th>
+							<Table.Th className="px-2 py-2">Nombres</Table.Th>
+							<Table.Th className="px-2 py-2">
+								Apellido Paterno
+							</Table.Th>
+							<Table.Th className="px-2 py-2">
+								Apellido Materno
+							</Table.Th>
+							<Table.Th className="px-2 py-2">
+								Fecha de Nacimiento
+							</Table.Th>
+							<Table.Th className="px-2 py-2">Editar</Table.Th>
+							<Table.Th className="px-2 py-2">Eliminar</Table.Th>
+						</Table.Tr> */}
+						{/* </Table.Thead> */}
+
+						{/* <Table.Tbody>
+							{rows.length > 0 ? (
+								rows
+							) : (
+								<Table.Tr>
+									<Table.Td
+										colSpan={Object.keys(data[0]).length}
+									>
+										<Text fw={500} ta="center">
+											Nothing found
+										</Text>
+									</Table.Td>
+								</Table.Tr>
+							)}
+						</Table.Tbody> */}
+						<Table.Tbody>
+							{rows.length > 0 ? (
+								rows
+							) : (
+								<Table.Tr>
+									<Table.Td
+										colSpan={
+											data && data[0]
+												? Object.keys(data[0]).length
+												: 1
+										}
+									>
+										<Text fw={500} ta="center">
+											Nothing found
+										</Text>
+									</Table.Td>
+								</Table.Tr>
+							)}
+						</Table.Tbody>
+
+						{/* <Table.Tbody>{rows}</Table.Tbody> */}
 					</Table>
 					{/* </Table.ScrollContainer> */}
 				</ScrollArea>
