@@ -38,6 +38,8 @@ import {
 	Text,
 	Center,
 	keys,
+	Checkbox,
+	Avatar,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import {
@@ -48,7 +50,8 @@ import {
 	IconSearch,
 } from '@tabler/icons-react';
 
-import classes from '../../../css/TableSort.module.css';
+import TableSortClasses from '../../../css/TableSort.module.css';
+import TableSelectionClasses from '../../../css/TableSelection.module.css';
 import TableScrollAreaClasses from '../../../css/TableScrollArea.module.css';
 
 interface RowData {
@@ -71,13 +74,16 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 			: IconChevronDown
 		: IconSelector;
 	return (
-		<Table.Th className={classes.th}>
-			<UnstyledButton onClick={onSort} className={classes.control}>
+		<Table.Th className={TableSortClasses.th}>
+			<UnstyledButton
+				onClick={onSort}
+				className={TableSortClasses.control}
+			>
 				<Group justify="space-between">
 					<Text fw={500} fz="sm">
 						{children}
 					</Text>
-					<Center className={classes.icon}>
+					<Center className={TableSortClasses.icon}>
 						<Icon
 							style={{ width: rem(16), height: rem(16) }}
 							stroke={1.5}
@@ -342,10 +348,26 @@ export default function Dashboard(props) {
 			});
 	};
 
+	// Ordenamiento
 	const [search, setSearch] = useState('');
 	const [sortedData, setSortedData] = useState(props.estudiantes);
 	const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
 	const [reverseSortDirection, setReverseSortDirection] = useState(false);
+
+	// Selección
+	const [selection, setSelection] = useState(['1']);
+	const toggleRow = (id: string) =>
+		setSelection(current =>
+			current.includes(id)
+				? current.filter(item => item !== id)
+				: [...current, id],
+		);
+	const toggleAll = () =>
+		setSelection(current =>
+			current.length === props.estudiantes.length
+				? []
+				: props.estudiantes.map(item => item.id),
+		);
 
 	//Uso de effect para mantener el ordenamiento de columnas y a la vez recoger datos de forma dinámica
 	useEffect(() => {
@@ -380,48 +402,62 @@ export default function Dashboard(props) {
 		// setSortedData(prevData => [...prevData, nuevoEstudiante]);
 	};
 
-	const rows = sortedData.map((estudiante, i) => (
-		<Table.Tr key={estudiante.id}>
-			<Table.Td>{i + 1}</Table.Td>
-			<Table.Td>{estudiante.nombre}</Table.Td>
-			<Table.Td>{estudiante.apellido_pat}</Table.Td>
-			<Table.Td>{estudiante.apellido_mat}</Table.Td>
-			<Table.Td>
-				{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
-			</Table.Td>
+	const rows = sortedData.map((estudiante, i) => {
+		const selected = selection.includes(estudiante.id);
+		return (
+			<Table.Tr
+				key={estudiante.id}
+				className={cx({
+					[TableSelectionClasses.rowSelected]: selected,
+				})}
+			>
+				<Table.Td>
+					<Checkbox
+						checked={selection.includes(estudiante.id)}
+						onChange={() => toggleRow(estudiante.id)}
+					/>
+				</Table.Td>
+				<Table.Td>{i + 1}</Table.Td>
+				<Table.Td>{estudiante.nombre}</Table.Td>
+				<Table.Td>{estudiante.apellido_pat}</Table.Td>
+				<Table.Td>{estudiante.apellido_mat}</Table.Td>
+				<Table.Td>
+					{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
+				</Table.Td>
 
-			<Table.Td>
-				<div className="flex justify-center items-center w-full h-full">
-					<WarningButton
-						onClick={() =>
-							openModal(
-								2,
-								estudiante.id,
-								estudiante.nombre,
-								estudiante.apellido_pat,
-								estudiante.apellido_mat,
-								estudiante.fecha_nac,
-							)
-						}
-					>
-						<i className="fa-solid fa-pen-to-square"></i>
-					</WarningButton>
-				</div>
-			</Table.Td>
+				<Table.Td>
+					<div className="flex justify-center items-center w-full h-full">
+						<WarningButton
+							onClick={() =>
+								openModal(
+									2,
+									estudiante.id,
+									estudiante.nombre,
+									estudiante.apellido_pat,
+									estudiante.apellido_mat,
+									estudiante.fecha_nac,
+								)
+							}
+						>
+							<i className="fa-solid fa-pen-to-square"></i>
+						</WarningButton>
+					</div>
+				</Table.Td>
 
-			<Table.Td>
-				<div className="flex justify-center items-center w-full h-full">
-					<DangerButton
-						onClick={() =>
-							eliminar(estudiante.id, estudiante.nombre)
-						}
-					>
-						<i className="fa-solid fa-trash"></i>
-					</DangerButton>
-				</div>
-			</Table.Td>
-		</Table.Tr>
-	));
+				<Table.Td>
+					<div className="flex justify-center items-center w-full h-full">
+						<DangerButton
+							onClick={() =>
+								eliminar(estudiante.id, estudiante.nombre)
+							}
+						>
+							<i className="fa-solid fa-trash"></i>
+						</DangerButton>
+					</div>
+				</Table.Td>
+			</Table.Tr>
+		);
+	});
 
 	return (
 		<AppLayout
@@ -476,6 +512,20 @@ export default function Dashboard(props) {
 
 						<Table.Tbody>
 							<Table.Tr>
+								<Table.Th style={{ width: rem(40) }}>
+									<Checkbox
+										onChange={toggleAll}
+										checked={
+											selection.length ===
+											props.estudiantes.length
+										}
+										indeterminate={
+											selection.length > 0 &&
+											selection.length !==
+												props.estudiantes.length
+										}
+									/>
+								</Table.Th>
 								<Table.Th className="px-2 py-2">#</Table.Th>
 								<Th
 									sorted={sortBy === 'nombre'}
