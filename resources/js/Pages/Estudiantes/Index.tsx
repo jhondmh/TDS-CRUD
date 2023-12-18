@@ -3,6 +3,7 @@ import cx from 'clsx';
 // import Welcome from '@/Components/Welcome';
 import AppLayout from '@/Layouts/AppLayout';
 //funcionando
+import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/react';
 // import classNames from 'classnames';
 import React, { useRef, useState, useEffect } from 'react';
@@ -402,6 +403,115 @@ export default function Dashboard(props) {
 		// setSortedData(prevData => [...prevData, nuevoEstudiante]);
 	};
 
+	const idsToSend = selection.map(id => parseInt(id, 10));
+
+	const eliminarMultiples = () => {
+		if (selection.length === 0) {
+			Swal.fire(
+				'Por favor, selecciona al menos un estudiante para eliminar.',
+			);
+			return;
+		}
+
+		const alerta2 = Swal.mixin({ buttonsStyling: true });
+
+		alerta2
+			.fire({
+				title: '¿Estás seguro?',
+				text: 'Esta acción no se puede deshacer',
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Sí, eliminar!',
+			})
+			.then(result => {
+				if (result.isConfirmed) {
+					// Usar el método `post` o `put` del hook useForm
+					console.log('seleccion antes de post', selection);
+					console.log('idsToSend antes de post', idsToSend);
+					Inertia.post(route('estudiantes.multipleDestroy'), {
+						ids: selection,
+						onSuccess: () => {
+							Swal.fire(
+								'Eliminados!',
+								'Los estudiantes han sido eliminados.',
+								'success',
+							);
+
+							const updatedData = sortedData.filter(
+								estudiante =>
+									!selection.includes(estudiante.id),
+							);
+							setSortedData(updatedData);
+							setSelection([]);
+						},
+						onError: () => {
+							Swal.fire(
+								'Error',
+								'Ocurrió un error al eliminar los estudiantes.',
+								'error',
+							);
+						},
+						// });
+					});
+				}
+
+				console.log('seleccion despues de post', selection);
+				console.log('idsToSend despues de post', idsToSend);
+			});
+	};
+
+	// const eliminarMultiples = () => {
+	// 	if (selection.length === 0) {
+	// 		Swal.fire(
+	// 			'Por favor, selecciona al menos un estudiante para eliminar.',
+	// 		);
+	// 		return;
+	// 	}
+
+	// 	const alerta2 = Swal.mixin({ buttonsStyling: true });
+
+	// 	alerta2
+	// 		.fire({
+	// 			title: '¿Estás seguro?',
+	// 			text: 'Esta acción no se puede deshacer',
+	// 			icon: 'warning',
+	// 			showCancelButton: true,
+	// 			confirmButtonColor: '#3085d6',
+	// 			cancelButtonColor: '#d33',
+	// 			confirmButtonText: 'Sí, eliminar!',
+	// 		})
+	// 		.then(result => {
+	// 			if (result.isConfirmed) {
+	// 				Inertia.post(route('estudiantes.multipleDestroy'), {
+	// 					ids: selection,
+	// 					onSuccess: () => {
+	// 						Swal.fire(
+	// 							'Eliminados!',
+	// 							'Los estudiantes han sido eliminados.',
+	// 							'success',
+	// 						);
+	// 						// Actualiza el estado local para reflejar la eliminación
+	// 						const updatedData = sortedData.filter(
+	// 							estudiante =>
+	// 								!selection.includes(estudiante.id),
+	// 						);
+	// 						setSortedData(updatedData);
+	// 						setSelection([]);
+	// 					},
+	// 					onError: () => {
+	// 						Swal.fire(
+	// 							'Error',
+	// 							'Ocurrió un error al eliminar los estudiantes.',
+	// 							'error',
+	// 						);
+	// 					},
+	// 				});
+	// 			}
+	// 		});
+	// };
+
 	const rows = sortedData.map((estudiante, i) => {
 		const selected = selection.includes(estudiante.id);
 		return (
@@ -501,6 +611,9 @@ export default function Dashboard(props) {
 							onChange={handleSearchChange}
 						/>
 					</div>
+					<PrimaryButton onClick={eliminarMultiples}>
+						Eliminar seleccionados
+					</PrimaryButton>
 
 					{/* <Table.ScrollContainer minWidth={500}> */}
 					<Table highlightOnHover>

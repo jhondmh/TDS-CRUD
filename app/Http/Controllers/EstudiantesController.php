@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Estudiantes;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class EstudiantesController extends Controller
 {
@@ -45,8 +47,33 @@ class EstudiantesController extends Controller
 
     public function destroy($id)
     {
+        Log::info("Método destroy llamado con ID: $id");
         $estudiante = Estudiantes::find($id);
         $estudiante->delete();
         return redirect('estudiantes');
+    }
+
+    public function multipleDestroy(Request $request)
+    {
+        // Log::info("Método multipleDestroy llamado");
+        $ids = $request->input('ids');
+
+        if ($ids === null || count($ids) === 0) {
+            return response()->json(['error' => 'No se proporcionaron IDs válidos.'], 400);
+            // return redirect()->back()->with('error', 'No se proporcionaron IDs válidos.');
+        }
+
+
+        // DB::beginTransaction();
+        try {
+            Estudiantes::whereIn('id', $ids)->delete();
+            // DB::commit();
+            // return response()->json(['success' => 'Estudiantes eliminados con éxito.']);
+            return redirect('estudiantes');
+        } catch (\Exception $e) {
+            // DB::rollBack();
+            // Log::error("Error al eliminar estudiantes: " . $e->getMessage());
+            return response()->json(['error' => 'Error al eliminar estudiantes.'], 500);
+        }
     }
 }

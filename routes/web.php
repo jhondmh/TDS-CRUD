@@ -39,6 +39,20 @@ Route::middleware([
 
     Route::resource('estudiantes', EstudiantesController::class);
 
+    // Route::delete('/estudiantes/multiple-delete', [EstudiantesController::class, 'multipleDestroy']);
+    // Route::delete('/estudiantes/{estudiante}', [EstudiantesController::class, 'destroy'])->name('estudiantes.destroy');
+    Route::post('/estudiantes/multiple-destroy', [EstudiantesController::class, 'multipleDestroy'])->name('estudiantes.multipleDestroy');
+    // Route::post('/estudiantes/multiple-destroy', [EstudiantesController::class, 'multipleDestroy'])->middleware(['auth:sanctum', 'verified'])->name('estudiantes.multipleDestroy');
+
+
+    // Route::delete('/user', function () {
+    //     request()->user()->delete();
+    //     // Redirigir al usuario a la página de inicio de sesión o a una página de confirmación
+    //     return Inertia::location(url('/'));
+    // })->middleware(['auth:sanctum', 'verified'])->name('current-user.multipleDestroy');
+
+
+
     // Route::delete('/user', function () {
     //     request()->user()->delete();
     //     return response()->json(['status' => 'success']);
