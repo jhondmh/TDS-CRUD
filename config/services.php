@@ -31,17 +31,33 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // 'google' => [
+    //     'client_id' => '791021486308-1rpi6ll11vrnp1j3j9h1odifbj4o9sdk.apps.googleusercontent.com',
+    //     'client_secret' => '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',
+    //     'redirect' => 'http://127.0.0.1:8000/auth/google/callback',
+    // ],
+
+
+    // 'facebook' => [
+    //     'client_id' => '870184651466984',
+    //     'client_secret' => 'ae43f27ebc6c9630831b3629cab531dc',
+    //     'redirect' => 'http://localhost:8000/auth/facebook/callback',
+    // ],
+
+
     'google' => [
-        'client_id' => '791021486308-1rpi6ll11vrnp1j3j9h1odifbj4o9sdk.apps.googleusercontent.com',
-        'client_secret' => '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',
-        'redirect' => 'http://127.0.0.1:8000/auth/google/callback',
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
     ],
 
 
     'facebook' => [
-        'client_id' => '870184651466984',
-        'client_secret' => 'ae43f27ebc6c9630831b3629cab531dc',
-        'redirect' => 'http://localhost:8000/auth/facebook/callback',
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => env('FACEBOOK_REDIRECT'),
     ],
+
+
 
 ];
