@@ -419,7 +419,7 @@ export default function Dashboard(props) {
 	const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
 	// Selección
-	const [selection, setSelection] = useState(['1']);
+	const [selection, setSelection] = useState([]);
 	const toggleRow = (id: string) =>
 		setSelection(current =>
 			current.includes(id)
