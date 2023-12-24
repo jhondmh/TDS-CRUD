@@ -67,12 +67,16 @@ class EstudiantesController extends Controller
         // DB::beginTransaction();
         try {
             Estudiantes::whereIn('id', $ids)->delete();
+            // $estudiantes = Estudiantes::all(); // Recuperar datos actualizados
             // DB::commit();
+            return response()->json(['success' => 'Estudiantes eliminados con éxito.']);
+            // return redirect('estudiantes');
             // return response()->json(['success' => 'Estudiantes eliminados con éxito.']);
-            return redirect('estudiantes');
+            // return Inertia::render('Estudiantes/Index', ['estudiantes' => $estudiantes]);
         } catch (\Exception $e) {
             // DB::rollBack();
             // Log::error("Error al eliminar estudiantes: " . $e->getMessage());
+            // return response()->json(['error' => 'Error al eliminar estudiantes.'], 500);
             return response()->json(['error' => 'Error al eliminar estudiantes.'], 500);
         }
     }

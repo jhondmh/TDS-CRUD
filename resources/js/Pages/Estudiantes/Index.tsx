@@ -1,4 +1,5 @@
 import cx from 'clsx';
+import axios from 'axios';
 // import React from 'react';
 // import Welcome from '@/Components/Welcome';
 import AppLayout from '@/Layouts/AppLayout';
@@ -430,31 +431,31 @@ export default function Dashboard(props) {
 					// Usar el método `post` o `put` del hook useForm
 					console.log('seleccion antes de post', selection);
 					console.log('idsToSend antes de post', idsToSend);
-					Inertia.post(route('estudiantes.multipleDestroy'), {
-						ids: selection,
-						onSuccess: () => {
+					axios
+						.post(route('estudiantes.multipleDestroy'), {
+							ids: idsToSend,
+						})
+						.then(response => {
 							Swal.fire(
 								'Eliminados!',
-								'Los estudiantes han sido eliminados.',
+								response.data.success,
 								'success',
 							);
-
+							// Actualiza el estado local para reflejar la eliminación
 							const updatedData = sortedData.filter(
 								estudiante =>
-									!selection.includes(estudiante.id),
+									!idsToSend.includes(estudiante.id),
 							);
 							setSortedData(updatedData);
 							setSelection([]);
-						},
-						onError: () => {
+						})
+						.catch(error => {
 							Swal.fire(
 								'Error',
 								'Ocurrió un error al eliminar los estudiantes.',
 								'error',
 							);
-						},
-						// });
-					});
+						});
 				}
 
 				console.log('seleccion despues de post', selection);
@@ -579,10 +580,14 @@ export default function Dashboard(props) {
 			)}
 		>
 			<div className="bg-dark grid v-screen place-items-center pt-6">
-				<div className="mt-3 mb-3 flex justify-end">
+				<div className="mt-3 mb-3 flex justify-end space-x-4">
 					<PrimaryButton onClick={() => openModal(1)}>
 						<i className="fa-solid fa-circle-plus mr-2"></i>
 						Añadir
+					</PrimaryButton>
+
+					<PrimaryButton onClick={eliminarMultiples}>
+						Eliminar seleccionados
 					</PrimaryButton>
 				</div>
 			</div>
@@ -611,9 +616,6 @@ export default function Dashboard(props) {
 							onChange={handleSearchChange}
 						/>
 					</div>
-					<PrimaryButton onClick={eliminarMultiples}>
-						Eliminar seleccionados
-					</PrimaryButton>
 
 					{/* <Table.ScrollContainer minWidth={500}> */}
 					<Table highlightOnHover>
