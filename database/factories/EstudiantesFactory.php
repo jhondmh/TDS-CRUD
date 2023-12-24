@@ -17,11 +17,15 @@ class EstudiantesFactory extends Factory
      */
     public function definition(): array
     {
+        $departamentos = ['Puno', 'Arequipa', 'Lima'];
+
         return [
             'nombre' => $this->faker->firstName(),
             'apellido_pat' => $this->faker->lastName(),
             'apellido_mat' => $this->faker->lastName(),
             'fecha_nac' => $this->faker->date($format = 'Y-m-d', $max = 'now'),
+            'nota1' => $this->faker->numberBetween($min = 0, $max = 20),
+            'departamento' => $this->faker->randomElement($departamentos),
         ];
     }
 }

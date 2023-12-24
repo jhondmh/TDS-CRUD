@@ -42,6 +42,7 @@ import {
 	keys,
 	Checkbox,
 	Avatar,
+	Select,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import {
@@ -60,6 +61,8 @@ interface RowData {
 	nombre: string;
 	apellido_pat: string;
 	apellido_mat: string;
+	nota1: string;
+	departamento: string;
 }
 
 interface ThProps {
@@ -125,31 +128,64 @@ function filterData(data: RowData[], search: string) {
 	);
 }
 
-function sortData(
-	data: RowData[],
-	payload: {
-		sortBy: keyof RowData | null;
-		reversed: boolean;
-		search: string;
-	},
-) {
-	const { sortBy } = payload;
+// function sortData(
+// 	data: RowData[],
+// 	payload: {
+// 		sortBy: keyof RowData | null;
+// 		reversed: boolean;
+// 		search: string;
+// 	},
+// ) {
+// 	const { sortBy } = payload;
 
-	if (!sortBy) {
-		return filterData(data, payload.search);
-	}
+// 	if (!sortBy) {
+// 		return filterData(data, payload.search);
+// 	}
 
-	return filterData(
-		[...data].sort((a, b) => {
-			if (payload.reversed) {
-				return b[sortBy].localeCompare(a[sortBy]);
-			}
+// 	return filterData(
+// 		[...data].sort((a, b) => {
+// 			if (payload.reversed) {
+// 				return b[sortBy].localeCompare(a[sortBy]);
+// 			}
 
-			return a[sortBy].localeCompare(b[sortBy]);
-		}),
-		payload.search,
-	);
+// 			return a[sortBy].localeCompare(b[sortBy]);
+// 		}),
+// 		payload.search,
+// 	);
+// }
+
+
+
+function sortData(data, payload) {
+  const { sortBy, reversed, search } = payload;
+
+  if (!sortBy) {
+    return filterData(data, search);
+  }
+
+  return filterData(
+    [...data].sort((a, b) => {
+      // Comprueba si el valor es un número
+      if (!isNaN(a[sortBy]) && !isNaN(b[sortBy])) {
+        // Ordena como número
+        return reversed ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy];
+      } else {
+        // Ordena como cadena
+        if (reversed) {
+          return b[sortBy].localeCompare(a[sortBy]);
+        } else {
+          return a[sortBy].localeCompare(b[sortBy]);
+        }
+      }
+    }),
+    search,
+  );
 }
+
+
+
+
+
 
 export default function Dashboard(props) {
 	const route = useRoute();
@@ -160,6 +196,8 @@ export default function Dashboard(props) {
 	const NombreInput = useRef();
 	const Apellido_Pat_Input = useRef();
 	const Apellido_Mat_Input = useRef();
+	const Nota1Input = useRef();
+	const DepartamentoInput = useRef();
 
 	const [scrolled, setScrolled] = useState(false);
 
@@ -215,6 +253,8 @@ export default function Dashboard(props) {
 		apellido_pat: '',
 		apellido_mat: '',
 		fecha_nac: '',
+		nota1: '',
+		departamento: '',
 	});
 
 	useEffect(() => {
@@ -231,6 +271,8 @@ export default function Dashboard(props) {
 		apellido_pat,
 		apellido_mat,
 		fecha_nac,
+		nota1,
+		departamento,
 	) => {
 		// setModal(true),
 		open();
@@ -240,6 +282,8 @@ export default function Dashboard(props) {
 			apellido_pat: apellido_pat,
 			apellido_mat: apellido_mat,
 			fecha_nac: fecha_nac,
+			nota1: nota1,
+			departamento: departamento,
 		});
 		if (op === 1) {
 			setTitle('Añadir estudiante');
@@ -254,6 +298,8 @@ export default function Dashboard(props) {
 				apellido_pat: apellido_pat,
 				apellido_mat: apellido_mat,
 				fecha_nac: fecha_nac,
+				nota1: nota1,
+				departamento: departamento,
 			});
 			// console.log("🚀 ~ file: Index.tsx:63 ~ Dashboard ~ fecha_nac:", fecha_nac)
 		}
@@ -287,6 +333,14 @@ export default function Dashboard(props) {
 						reset('fecha_nac');
 						Fecha_Nac_Input.current.focus();
 					}
+					if (errors.nota1) {
+						reset('nota1');
+						Nota1Input.current.focus();
+					}
+					if (errors.departamento) {
+						reset('departamento');
+						DepartamentoInput.current.focus();
+					}
 				},
 			});
 		} else {
@@ -310,6 +364,14 @@ export default function Dashboard(props) {
 					if (errors.fecha_nac) {
 						reset('fecha_nac');
 						Fecha_Nac_Input.current.focus();
+					}
+					if (errors.nota1) {
+						reset('nota1');
+						Nota1Input.current.focus();
+					}
+					if (errors.departamento) {
+						reset('departamento');
+						DepartamentoInput.current.focus();
 					}
 				},
 			});
@@ -536,6 +598,9 @@ export default function Dashboard(props) {
 					{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
 				</Table.Td>
 
+				<Table.Td>{estudiante.nota1}</Table.Td>
+				<Table.Td>{estudiante.departamento}</Table.Td>
+
 				<Table.Td>
 					<div className="flex justify-center items-center w-full h-full">
 						<WarningButton
@@ -547,6 +612,8 @@ export default function Dashboard(props) {
 									estudiante.apellido_pat,
 									estudiante.apellido_mat,
 									estudiante.fecha_nac,
+									estudiante.nota1,
+									estudiante.departamento,
 								)
 							}
 						>
@@ -667,6 +734,28 @@ export default function Dashboard(props) {
 								<Table.Th className="px-2 py-2">
 									Fecha de Nacimiento
 								</Table.Th>
+
+
+								{/* <Table.Th className="px-2 py-2">
+									Nota 1
+								</Table.Th> */}
+
+								<Th
+									sorted={sortBy === 'nota1'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('nota1')}
+								>
+									Nota 1
+								</Th>
+
+								<Th
+									sorted={sortBy === 'departamento'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('departamento')}
+								>
+									Departamento
+								</Th>
+
 								<Table.Th className="px-2 py-2">
 									Editar
 								</Table.Th>
@@ -852,6 +941,66 @@ export default function Dashboard(props) {
 
 						<InputError
 							message={errors.fecha_nac}
+							className="mt-2"
+						></InputError>
+					</div>
+
+					<div className="mt-6">
+						{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+						<TextInput
+							id="nota1"
+							name="nota1"
+							label="Nota 1"
+							placeholder="Nota 1"
+							ref={Nota1Input}
+							required
+							value={data.nota1 || ''}
+							onChange={e => setData('nota1', e.target.value)}
+							spellCheck={false}
+							// className="mt-1 block w-full"
+							data-autofocus
+						/>
+						<InputError
+							message={errors.nota1}
+							className="mt-2"
+						></InputError>
+					</div>
+
+					<div className="mt-6">
+						{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+						{/* <TextInput
+							id="departamento"
+							name="departamento"
+							label="Departamento"
+							placeholder="Departamento"
+							ref={DepartamentoInput}
+							required
+							value={data.departamento || ''}
+							onChange={e =>
+								setData('departamento', e.target.value)
+							}
+							spellCheck={false}
+							// className="mt-1 block w-full"
+							data-autofocus
+						/> */}
+
+						<Select
+							id="departamento"
+							name="departamento"
+							label="Departamento"
+							placeholder="Departamento"
+							data={['Puno', 'Arequipa', 'Lima']}
+							ref={DepartamentoInput}
+							required
+							value={data.departamento || ''}
+							// onChange={e =>
+							// 	setData('departamento', e.target.value)
+							// }
+                            onChange={(value) => setData('departamento', value)}
+						/>
+
+						<InputError
+							message={errors.departamento}
 							className="mt-2"
 						></InputError>
 					</div>
