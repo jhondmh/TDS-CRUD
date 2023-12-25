@@ -4,7 +4,7 @@ import axios from 'axios';
 // import Welcome from '@/Components/Welcome';
 import AppLayout from '@/Layouts/AppLayout';
 //funcionando
-import { Inertia } from '@inertiajs/inertia';
+// import { Inertia } from '@inertiajs/inertia';
 import { useForm } from '@inertiajs/react';
 // import classNames from 'classnames';
 import React, { useRef, useState, useEffect } from 'react';
@@ -154,41 +154,36 @@ function filterData(data: RowData[], search: string) {
 // 	);
 // }
 
-
-
 function sortData(data, payload) {
-  const { sortBy, reversed, search } = payload;
+	const { sortBy, reversed, search } = payload;
 
-  if (!sortBy) {
-    return filterData(data, search);
-  }
+	if (!sortBy) {
+		return filterData(data, search);
+	}
 
-  return filterData(
-    [...data].sort((a, b) => {
-      // Comprueba si el valor es un número
-      if (!isNaN(a[sortBy]) && !isNaN(b[sortBy])) {
-        // Ordena como número
-        return reversed ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy];
-      } else {
-        // Ordena como cadena
-        if (reversed) {
-          return b[sortBy].localeCompare(a[sortBy]);
-        } else {
-          return a[sortBy].localeCompare(b[sortBy]);
-        }
-      }
-    }),
-    search,
-  );
+	return filterData(
+		[...data].sort((a, b) => {
+			// Comprueba si el valor es un número
+			if (!isNaN(a[sortBy]) && !isNaN(b[sortBy])) {
+				// Ordena como número
+				return reversed ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy];
+			} else {
+				// Ordena como cadena
+				if (reversed) {
+					return b[sortBy].localeCompare(a[sortBy]);
+				} else {
+					return a[sortBy].localeCompare(b[sortBy]);
+				}
+			}
+		}),
+		search,
+	);
 }
-
-
-
-
-
 
 export default function Dashboard(props) {
 	const route = useRoute();
+
+	const [estudiantes, setEstudiantes] = useState(props.estudiantes);
 
 	// const [modal, setModal] = useState(false);
 	const [title, setTitle] = useState('');
@@ -468,6 +463,16 @@ export default function Dashboard(props) {
 
 	const idsToSend = selection.map(id => parseInt(id, 10));
 
+	useEffect(() => {
+		setSortedData(
+			sortData(estudiantes, {
+				sortBy,
+				reversed: reverseSortDirection,
+				search,
+			}),
+		);
+	}, [estudiantes, sortBy, reverseSortDirection, search]);
+
 	const eliminarMultiples = () => {
 		if (selection.length === 0) {
 			Swal.fire(
@@ -508,6 +513,7 @@ export default function Dashboard(props) {
 								estudiante =>
 									!idsToSend.includes(estudiante.id),
 							);
+							setEstudiantes(updatedData);
 							setSortedData(updatedData);
 							setSelection([]);
 						})
@@ -657,42 +663,57 @@ export default function Dashboard(props) {
 						Eliminar seleccionados
 					</PrimaryButton>
 				</div>
+
+				<div className="mt-6 w-2/3">
+					<TextInput
+						placeholder="Buscar por cualquier campo"
+						mb="md"
+						leftSection={
+							<IconSearch
+								style={{
+									width: rem(16),
+									height: rem(16),
+								}}
+								stroke={1.5}
+							/>
+						}
+						value={search}
+						onChange={handleSearchChange}
+					/>
+				</div>
 			</div>
 			<div className="overflow-auto bg-dark grid v-screen place-items-center pb-6 dark:bg-gray-900">
 				{/* <table className="table-auto border border-gray-400 dark:border-gray-700 text-black mx-2"> */}
-				{/* <ScrollArea w={700} h={600} > */}
+
 				<ScrollArea
+					w={1150}
+					// w={500}
+					h={400}
+					onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+					scrollbarSize={6}
+					classNames={TableScrollAreaClasses}
+				>
+					{/* <Table.ScrollContainer minWidth={500}> */}
+					{/* <ScrollArea
 					// w={500}
 					h={400}
 					// offsetScrollbars
 					onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
 					scrollbarSize={6}
 					classNames={TableScrollAreaClasses}
-				>
-					<div className="mt-6 mx-16">
-						<TextInput
-							placeholder="Buscar por cualquier campo"
-							mb="md"
-							leftSection={
-								<IconSearch
-									style={{ width: rem(16), height: rem(16) }}
-									stroke={1.5}
-								/>
-							}
-							value={search}
-							onChange={handleSearchChange}
-						/>
-					</div>
+				> */}
 
-					{/* <Table.ScrollContainer minWidth={500}> */}
 					<Table highlightOnHover>
 						{/* <Table.Thead
 							className={cx(TableScrollAreaClasses.header, {
 								[TableScrollAreaClasses.scrolled]: scrolled,
 							})}
 						> */}
-
-						<Table.Tbody>
+						<Table.Tbody
+							className={cx(TableScrollAreaClasses.header, {
+								[TableScrollAreaClasses.scrolled]: scrolled,
+							})}
+						>
 							<Table.Tr>
 								<Table.Th style={{ width: rem(40) }}>
 									<Checkbox
@@ -735,7 +756,6 @@ export default function Dashboard(props) {
 									Fecha de Nacimiento
 								</Table.Th>
 
-
 								{/* <Table.Th className="px-2 py-2">
 									Nota 1
 								</Table.Th> */}
@@ -764,6 +784,7 @@ export default function Dashboard(props) {
 								</Table.Th>
 							</Table.Tr>
 						</Table.Tbody>
+						{/* </Table.Thead> */}
 
 						{/* <Table.Tr className="bg-gray-100 dark:bg-gray-800 dark:text-white">
 							<Table.Th className="px-2 py-2">#</Table.Th>
@@ -780,23 +801,22 @@ export default function Dashboard(props) {
 							<Table.Th className="px-2 py-2">Editar</Table.Th>
 							<Table.Th className="px-2 py-2">Eliminar</Table.Th>
 						</Table.Tr> */}
-						{/* </Table.Thead> */}
 
 						{/* <Table.Tbody>
 							{rows.length > 0 ? (
-								rows
-							) : (
-								<Table.Tr>
+                                rows
+                                ) : (
+                                    <Table.Tr>
 									<Table.Td
-										colSpan={Object.keys(data[0]).length}
+                                    colSpan={Object.keys(data[0]).length}
 									>
-										<Text fw={500} ta="center">
-											Nothing found
-										</Text>
+                                    <Text fw={500} ta="center">
+                                    Nothing found
+                                    </Text>
 									</Table.Td>
-								</Table.Tr>
-							)}
-						</Table.Tbody> */}
+                                    </Table.Tr>
+                                    )}
+                                </Table.Tbody> */}
 						<Table.Tbody>
 							{rows.length > 0 ? (
 								rows
@@ -818,6 +838,7 @@ export default function Dashboard(props) {
 						</Table.Tbody>
 
 						{/* <Table.Tbody>{rows}</Table.Tbody> */}
+						{/* </Table.Thead> */}
 					</Table>
 					{/* </Table.ScrollContainer> */}
 				</ScrollArea>
@@ -996,7 +1017,7 @@ export default function Dashboard(props) {
 							// onChange={e =>
 							// 	setData('departamento', e.target.value)
 							// }
-                            onChange={(value) => setData('departamento', value)}
+							onChange={value => setData('departamento', value)}
 						/>
 
 						<InputError
