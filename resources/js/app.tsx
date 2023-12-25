@@ -45,7 +45,6 @@ createInertiaApp({
 				<RouteContext.Provider value={(window as any).route}>
 					<App {...props} />
 				</RouteContext.Provider>
-				,
 			</MantineProvider>,
 		);
 	},
