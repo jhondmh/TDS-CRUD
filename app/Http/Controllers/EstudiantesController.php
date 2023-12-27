@@ -31,7 +31,14 @@ class EstudiantesController extends Controller
         ]);
         $estudiante = new Estudiantes($request->input());
         $estudiante->save();
-        return redirect('estudiantes');
+        // return redirect('estudiantes');
+
+        // Devuelve una respuesta Inertia con el estudiante recién creado
+        return Inertia::render('Estudiantes/Index', [
+            'estudiante' => $estudiante,
+            'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
+        ]);
+        // return response()->json(['estudiante' => $estudiante]);
     }
 
     public function update(Request $request, $id)
@@ -46,7 +53,11 @@ class EstudiantesController extends Controller
         ]);
         $estudiante = Estudiantes::find($id);
         $estudiante->fill($request->input())->saveOrFail();
-        return redirect('estudiantes');
+        // return redirect('estudiantes');
+        return Inertia::render('Estudiantes/Index', [
+            'estudiante' => $estudiante,
+            'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
+        ]);
     }
 
     public function destroy($id)

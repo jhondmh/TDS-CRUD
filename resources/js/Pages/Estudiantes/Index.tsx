@@ -273,6 +273,7 @@ export default function Dashboard(props) {
 		open();
 		setOperation(op);
 		setData({
+			id: op === 2 ? id : '',
 			nombre: nombre,
 			apellido_pat: apellido_pat,
 			apellido_mat: apellido_mat,
@@ -280,23 +281,13 @@ export default function Dashboard(props) {
 			nota1: nota1,
 			departamento: departamento,
 		});
+
 		if (op === 1) {
 			setTitle('Añadir estudiante');
 			setDateValue(null);
 		} else {
 			setTitle('Editar estudiante');
-			// setDateValue(fecha_nac ? new Date(fecha_nac) : null);
 			setDateValue(fecha_nac ? dayjs(fecha_nac).toDate() : null);
-			setData({
-				id: id,
-				nombre: nombre,
-				apellido_pat: apellido_pat,
-				apellido_mat: apellido_mat,
-				fecha_nac: fecha_nac,
-				nota1: nota1,
-				departamento: departamento,
-			});
-			// console.log("🚀 ~ file: Index.tsx:63 ~ Dashboard ~ fecha_nac:", fecha_nac)
 		}
 	};
 	const closeModal = () => {
@@ -308,10 +299,23 @@ export default function Dashboard(props) {
 		e.preventDefault();
 		if (operation === 1) {
 			post(route('estudiantes.store'), {
-				onSuccess: () => {
+				// onSuccess: () => {
+				// 	ok('Estudiante añadido con éxito');
+				// },
+				onSuccess: response => {
+					// Suponiendo que response.props.estudiante contiene el estudiante añadido
+					const nuevoEstudiante = response.props.estudiante;
+					setEstudiantes(estudiantesActuales => [
+						...estudiantesActuales,
+						nuevoEstudiante,
+					]);
+					setSortedData(sortedDataActuales => [
+						...sortedDataActuales,
+						nuevoEstudiante,
+					]);
 					ok('Estudiante añadido con éxito');
 				},
-				onerror: () => {
+				onError: () => {
 					if (errors.nombre) {
 						reset('nombre');
 						NombreInput.current.focus();
@@ -340,10 +344,35 @@ export default function Dashboard(props) {
 			});
 		} else {
 			put(route('estudiantes.update', data.id), {
-				onSuccess: () => {
+				// onSuccess: () => {
+				// 	ok('Estudiante actualizado con éxito');
+				// },
+				onSuccess: response => {
+					// Suponiendo que response.props.estudiante contiene el estudiante actualizado
+					const estudianteActualizado = response.props.estudiante;
+					setEstudiantes(estudiantesActuales =>
+						estudiantesActuales.map(est =>
+							est.id === estudianteActualizado.id
+								? estudianteActualizado
+								: est,
+						),
+					);
+					setSortedData(sortedDataActuales =>
+						sortedDataActuales.map(est =>
+							est.id === estudianteActualizado.id
+								? estudianteActualizado
+								: est,
+						),
+					);
+                    // Actualiza de forma dinámica la página
+					// window.history.pushState(
+					// 	{},
+					// 	'',
+					// 	route('estudiantes.index'),
+					// );
 					ok('Estudiante actualizado con éxito');
 				},
-				onerror: () => {
+				onError: () => {
 					if (errors.nombre) {
 						reset('nombre');
 						NombreInput.current.focus();
@@ -399,7 +428,18 @@ export default function Dashboard(props) {
 			.then(result => {
 				if (result.isConfirmed) {
 					destroy(route('estudiantes.destroy', id), {
+						// onSuccess: () => {
+						// 	ok('Estudiante eliminado');
+						// },
 						onSuccess: () => {
+							setEstudiantes(estudiantesActuales =>
+								estudiantesActuales.filter(
+									est => est.id !== id,
+								),
+							);
+							setSortedData(sortedDataActuales =>
+								sortedDataActuales.filter(est => est.id !== id),
+							);
 							ok('Estudiante eliminado');
 						},
 					});
@@ -409,7 +449,7 @@ export default function Dashboard(props) {
 
 	// Ordenamiento
 	const [search, setSearch] = useState('');
-	const [sortedData, setSortedData] = useState(props.estudiantes);
+	const [sortedData, setSortedData] = useState(estudiantes);
 	const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
 	const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
@@ -423,28 +463,28 @@ export default function Dashboard(props) {
 		);
 	const toggleAll = () =>
 		setSelection(current =>
-			current.length === props.estudiantes.length
+			current.length === estudiantes.length
 				? []
-				: props.estudiantes.map(item => item.id),
+				: estudiantes.map(item => item.id),
 		);
 
-	//Uso de effect para mantener el ordenamiento de columnas y a la vez recoger datos de forma dinámica
-	useEffect(() => {
-		setSortedData(
-			sortData(props.estudiantes, {
-				sortBy,
-				reversed: reverseSortDirection,
-				search,
-			}),
-		);
-	}, [props.estudiantes, sortBy, reverseSortDirection, search]);
+	// //Uso de effect para mantener el ordenamiento de columnas y a la vez recoger datos de forma dinámica
+	// useEffect(() => {
+	// 	setSortedData(
+	// 		sortData(props.estudiantes, {
+	// 			sortBy,
+	// 			reversed: reverseSortDirection,
+	// 			search,
+	// 		}),
+	// 	);
+	// }, [props.estudiantes, sortBy, reverseSortDirection, search]);
 
 	const setSorting = (field: keyof RowData) => {
 		const reversed = field === sortBy ? !reverseSortDirection : false;
 		setReverseSortDirection(reversed);
 		setSortBy(field);
 		setSortedData(
-			sortData(props.estudiantes, { sortBy: field, reversed, search }),
+			sortData(estudiantes, { sortBy: field, reversed, search }),
 		);
 	};
 
@@ -452,26 +492,25 @@ export default function Dashboard(props) {
 		const { value } = event.currentTarget;
 		setSearch(value);
 		setSortedData(
-			sortData(props.estudiantes, {
+			sortData(estudiantes, {
 				sortBy,
 				reversed: reverseSortDirection,
 				search: value,
 			}),
 		);
-		// setSortedData(prevData => [...prevData, nuevoEstudiante]);
 	};
 
 	const idsToSend = selection.map(id => parseInt(id, 10));
 
-	useEffect(() => {
-		setSortedData(
-			sortData(estudiantes, {
-				sortBy,
-				reversed: reverseSortDirection,
-				search,
-			}),
-		);
-	}, [estudiantes, sortBy, reverseSortDirection, search]);
+	// useEffect(() => {
+	// 	setSortedData(
+	// 		sortData(estudiantes, {
+	// 			sortBy,
+	// 			reversed: reverseSortDirection,
+	// 			search,
+	// 		}),
+	// 	);
+	// }, [estudiantes, sortBy, reverseSortDirection, search]);
 
 	const eliminarMultiples = () => {
 		if (selection.length === 0) {
@@ -581,6 +620,26 @@ export default function Dashboard(props) {
 	// 		});
 	// };
 
+	// function formatGrade(grade) {
+	// 	if (grade === 0) {
+	// 		return '00';
+	// 	} else if (grade > 0 && grade < 10) {
+	// 		return '0' + grade;
+	// 	}
+	// 	return grade.toString();
+	// }
+	function formatGrade(grade) {
+		if (grade === null || grade === undefined) {
+			return ''; // O manejar de otra manera
+		}
+		if (grade === 0) {
+			return '00';
+		} else if (grade > 0 && grade < 10) {
+			return '0' + grade;
+		}
+		return grade.toString();
+	}
+
 	const rows = sortedData.map((estudiante, i) => {
 		const selected = selection.includes(estudiante.id);
 		return (
@@ -604,7 +663,7 @@ export default function Dashboard(props) {
 					{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
 				</Table.Td>
 
-				<Table.Td>{estudiante.nota1}</Table.Td>
+				<Table.Td>{formatGrade(estudiante.nota1)}</Table.Td>
 				<Table.Td>{estudiante.departamento}</Table.Td>
 
 				<Table.Td>
@@ -720,12 +779,12 @@ export default function Dashboard(props) {
 										onChange={toggleAll}
 										checked={
 											selection.length ===
-											props.estudiantes.length
+											estudiantes.length
 										}
 										indeterminate={
 											selection.length > 0 &&
 											selection.length !==
-												props.estudiantes.length
+												estudiantes.length
 										}
 									/>
 								</Table.Th>
@@ -975,7 +1034,11 @@ export default function Dashboard(props) {
 							placeholder="Nota 1"
 							ref={Nota1Input}
 							required
-							value={data.nota1 || ''}
+							value={
+								data.nota1 !== null && data.nota1 !== undefined
+									? data.nota1
+									: ''
+							}
 							onChange={e => setData('nota1', e.target.value)}
 							spellCheck={false}
 							// className="mt-1 block w-full"
