@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('apellido_pat',15);
             $table->string('apellido_mat',15);
             $table->date('fecha_nac');
+            $table->unsignedInteger('nota1');
+            $table->unsignedInteger('nota2');
+            $table->unsignedInteger('nota3');
+            $table->string('departamento',25);
             $table->timestamps();
         });
     }

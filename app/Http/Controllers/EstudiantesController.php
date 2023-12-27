@@ -27,6 +27,8 @@ class EstudiantesController extends Controller
             'apellido_mat' => 'required|max:15',
             'fecha_nac' => 'required|date|after:1950-01-01|before_or_equal:today',
             'nota1' => 'required|integer|between:0,20',
+            'nota2' => 'required|integer|between:0,20',
+            'nota3' => 'required|integer|between:0,20',
             'departamento' => 'required|max:25',
         ]);
         $estudiante = new Estudiantes($request->input());
@@ -49,6 +51,8 @@ class EstudiantesController extends Controller
             'apellido_mat' => 'required|max:15',
             'fecha_nac' => 'required|date|after:1950-01-01|before_or_equal:today',
             'nota1' => 'required|integer|between:0,20',
+            'nota2' => 'required|integer|between:0,20',
+            'nota3' => 'required|integer|between:0,20',
             'departamento' => 'required|max:25',
         ]);
         $estudiante = Estudiantes::find($id);

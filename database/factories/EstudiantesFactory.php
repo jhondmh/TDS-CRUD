@@ -25,6 +25,8 @@ class EstudiantesFactory extends Factory
             'apellido_mat' => $this->faker->lastName(),
             'fecha_nac' => $this->faker->date($format = 'Y-m-d', $max = 'now'),
             'nota1' => $this->faker->numberBetween($min = 0, $max = 20),
+            'nota2' => $this->faker->numberBetween($min = 0, $max = 20),
+            'nota3' => $this->faker->numberBetween($min = 0, $max = 20),
             'departamento' => $this->faker->randomElement($departamentos),
         ];
     }

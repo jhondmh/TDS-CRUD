@@ -65,6 +65,8 @@ interface RowData {
 	apellido_pat: string;
 	apellido_mat: string;
 	nota1: string;
+	nota2: string;
+	nota3: string;
 	departamento: string;
 }
 
@@ -265,6 +267,8 @@ export default function Dashboard(props) {
 			apellido_mat: '',
 			fecha_nac: null, // Puede que necesites ajustar esto según tu DatePicker
 			nota1: '',
+			nota2: '',
+			nota3: '',
 			departamento: '',
 		},
 
@@ -273,8 +277,7 @@ export default function Dashboard(props) {
 				if (!value) return 'El nombre es requerido';
 				if (value.length > 25)
 					return 'Nombre muy largo (máx. 25 caracteres)';
-				if (/\d/.test(value))
-					return 'Nombre no debe contener números';
+				if (/\d/.test(value)) return 'Nombre no debe contener números';
 				return null;
 			},
 			apellido_pat: value => {
@@ -309,6 +312,28 @@ export default function Dashboard(props) {
 				if (nota < 0) return 'Nota 1 no puede ser negativo';
 
 				if (nota > 20) return 'Nota 1 no debe estar entre 0 y 20';
+				return null;
+			},
+
+			nota2: value => {
+				if (!value) return 'Nota 2 es requerido';
+				if (!/^-?\d+$/.test(value))
+					return 'Nota 2 debe ser un número entero';
+				const nota = parseInt(value, 10);
+				if (nota < 0) return 'Nota 2 no puede ser negativo';
+
+				if (nota > 20) return 'Nota 2 no debe estar entre 0 y 20';
+				return null;
+			},
+
+			nota3: value => {
+				if (!value) return 'Nota 3 es requerido';
+				if (!/^-?\d+$/.test(value))
+					return 'Nota 3 debe ser un número entero';
+				const nota = parseInt(value, 10);
+				if (nota < 0) return 'Nota 3 no puede ser negativo';
+
+				if (nota > 20) return 'Nota 3 no debe estar entre 0 y 20';
 				return null;
 			},
 			departamento: value => {
@@ -346,6 +371,8 @@ export default function Dashboard(props) {
 		apellido_mat,
 		fecha_nac,
 		nota1,
+		nota2,
+		nota3,
 		departamento,
 	) => {
 		// setModal(true),
@@ -358,6 +385,8 @@ export default function Dashboard(props) {
 			apellido_mat: apellido_mat,
 			fecha_nac: fecha_nac,
 			nota1: formatGrade(nota1),
+			nota2: formatGrade(nota2),
+			nota3: formatGrade(nota3),
 			departamento: departamento,
 		});
 
@@ -490,6 +519,8 @@ export default function Dashboard(props) {
 				apellido_mat: values.apellido_mat,
 				fecha_nac: values.fecha_nac,
 				nota1: parseInt(values.nota1, 10), // Asegúrate de enviar un entero
+				nota2: parseInt(values.nota2, 10), // Asegúrate de enviar un entero
+				nota3: parseInt(values.nota3, 10), // Asegúrate de enviar un entero
 				departamento: values.departamento,
 			};
 
@@ -840,6 +871,8 @@ export default function Dashboard(props) {
 				</Table.Td>
 
 				<Table.Td>{formatGrade(estudiante.nota1)}</Table.Td>
+				<Table.Td>{formatGrade(estudiante.nota2)}</Table.Td>
+				<Table.Td>{formatGrade(estudiante.nota3)}</Table.Td>
 				<Table.Td>{estudiante.departamento}</Table.Td>
 
 				<Table.Td>
@@ -854,6 +887,8 @@ export default function Dashboard(props) {
 									estudiante.apellido_mat,
 									estudiante.fecha_nac,
 									estudiante.nota1,
+									estudiante.nota2,
+									estudiante.nota3,
 									estudiante.departamento,
 								)
 							}
@@ -927,7 +962,7 @@ export default function Dashboard(props) {
 					onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
 					scrollbarSize={6}
 					classNames={TableScrollAreaClasses}
-                    className='mt-3'
+					className="mt-3"
 				>
 					{/* <Table.ScrollContainer minWidth={500}> */}
 					{/* <ScrollArea
@@ -1002,6 +1037,22 @@ export default function Dashboard(props) {
 									onSort={() => setSorting('nota1')}
 								>
 									Nota 1
+								</Th>
+
+								<Th
+									sorted={sortBy === 'nota2'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('nota2')}
+								>
+									Nota 2
+								</Th>
+
+								<Th
+									sorted={sortBy === 'nota3'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('nota3')}
+								>
+									Nota 3
 								</Th>
 
 								<Th
@@ -1096,7 +1147,12 @@ export default function Dashboard(props) {
 					scrollbarSize={2}
 					classNames={TableScrollAreaClasses}
 				>
-					<form id="myForm" onSubmit={form.onSubmit(save)} className='mx-4' noValidate>
+					<form
+						id="myForm"
+						onSubmit={form.onSubmit(save)}
+						className="mx-4"
+						noValidate
+					>
 						<div className="mt-6">
 							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
 							<TextInput
@@ -1229,34 +1285,89 @@ export default function Dashboard(props) {
 							className="mt-2"
 						></InputError> */}
 						</div>
+						<div>
+							<Flex justify="flex-end">
+								<div className="mt-6 mr-5">
+									{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+									<TextInput
+										id="nota1"
+										name="nota1"
+										label="Nota 1"
+										{...form.getInputProps('nota1')}
+										placeholder="Nota 1"
+										// ref={Nota1Input}
+										required
+										value={
+											form.values.nota1 !== null &&
+											form.values.nota1 !== undefined
+												? form.values.nota1
+												: ''
+										}
+										onChange={e =>
+											form.setFieldValue(
+												'nota1',
+												e.target.value,
+											)
+										}
+										spellCheck={false}
+										// className="mt-1 block w-full"
+									/>
+								</div>
 
-						<div className="mt-6">
-							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
-							<TextInput
-								id="nota1"
-								name="nota1"
-								label="Nota 1"
-								{...form.getInputProps('nota1')}
-								placeholder="Nota 1"
-								// ref={Nota1Input}
-								required
-								value={
-									form.values.nota1 !== null &&
-									form.values.nota1 !== undefined
-										? form.values.nota1
-										: ''
-								}
-								onChange={e =>
-									form.setFieldValue('nota1', e.target.value)
-								}
-								spellCheck={false}
-								// className="mt-1 block w-full"
-								// data-autofocus
-							/>
-							{/* <InputError
-							message={errors.nota1}
-							className="mt-2"
-						></InputError> */}
+								<div className="mt-6 mr-5">
+									{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+									<TextInput
+										id="nota2"
+										name="nota2"
+										label="Nota 2"
+										{...form.getInputProps('nota2')}
+										placeholder="Nota 2"
+										// ref={Nota1Input}
+										required
+										value={
+											form.values.nota2 !== null &&
+											form.values.nota2 !== undefined
+												? form.values.nota2
+												: ''
+										}
+										onChange={e =>
+											form.setFieldValue(
+												'nota2',
+												e.target.value,
+											)
+										}
+										spellCheck={false}
+										// className="mt-1 block w-full"
+									/>
+								</div>
+
+								<div className="mt-6">
+									{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+									<TextInput
+										id="nota3"
+										name="nota3"
+										label="Nota 3"
+										{...form.getInputProps('nota3')}
+										placeholder="Nota 3"
+										// ref={Nota1Input}
+										required
+										value={
+											form.values.nota3 !== null &&
+											form.values.nota3 !== undefined
+												? form.values.nota3
+												: ''
+										}
+										onChange={e =>
+											form.setFieldValue(
+												'nota3',
+												e.target.value,
+											)
+										}
+										spellCheck={false}
+										// className="mt-1 block w-full"
+									/>
+								</div>
+							</Flex>
 						</div>
 
 						<div className="mt-6">
