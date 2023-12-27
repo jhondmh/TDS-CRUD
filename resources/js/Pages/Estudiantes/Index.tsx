@@ -303,10 +303,10 @@ export default function Dashboard(props) {
 			},
 			nota1: value => {
 				if (!value) return 'Nota 1 es requerida';
-				if (!/^\d+$/.test(value))
+				if (!/^-?\d+$/.test(value))
 					return 'Nota 1 debe ser un número entero';
 				const nota = parseInt(value, 10);
-				if (nota < 0) return 'Nota 1 no puede ser negativa';
+				if (nota < 0) return 'Nota 1 no puede ser negativo';
 
 				if (nota > 20) return 'Nota 1 no debe estar entre 0 y 20';
 				return null;
