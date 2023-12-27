@@ -84,7 +84,10 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 			: IconChevronDown
 		: IconSelector;
 	return (
-		<Table.Th className={TableSortClasses.th}>
+		<Table.Th
+			className={TableSortClasses.th}
+			style={{ whiteSpace: 'nowrap' }}
+		>
 			<UnstyledButton
 				onClick={onSort}
 				className={TableSortClasses.control}
@@ -934,7 +937,7 @@ export default function Dashboard(props) {
 					</PrimaryButton>
 				</div>
 
-				<div className="mt-6 w-2/3">
+				<div className="mt-6 w-2/4">
 					<TextInput
 						placeholder="Buscar por cualquier campo"
 						mb="md"
@@ -956,8 +959,8 @@ export default function Dashboard(props) {
 				{/* <table className="table-auto border border-gray-400 dark:border-gray-700 text-black mx-2"> */}
 
 				<ScrollArea
-					w={1150}
-					// w={500}
+					// w={1150}
+					w={1000}
 					h={400}
 					onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
 					scrollbarSize={6}
@@ -974,7 +977,7 @@ export default function Dashboard(props) {
 					classNames={TableScrollAreaClasses}
 				> */}
 
-					<Table highlightOnHover>
+					<Table highlightOnHover className="mb-3">
 						{/* <Table.Thead
 							className={cx(TableScrollAreaClasses.header, {
 								[TableScrollAreaClasses.scrolled]: scrolled,
@@ -984,9 +987,14 @@ export default function Dashboard(props) {
 							className={cx(TableScrollAreaClasses.header, {
 								[TableScrollAreaClasses.scrolled]: scrolled,
 							})}
+
 						>
 							<Table.Tr>
-								<Table.Th style={{ width: rem(40) }}>
+								<Table.Th
+									style={{
+										width: rem(40),
+									}}
+								>
 									<Checkbox
 										onChange={toggleAll}
 										checked={
@@ -1023,7 +1031,10 @@ export default function Dashboard(props) {
 									Apellido Materno
 								</Th>
 
-								<Table.Th className="px-2 py-2">
+								<Table.Th
+									className="px-2 py-2"
+									style={{ whiteSpace: 'nowrap' }}
+								>
 									Fecha de Nacimiento
 								</Table.Th>
 
