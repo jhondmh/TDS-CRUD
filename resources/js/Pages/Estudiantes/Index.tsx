@@ -1121,8 +1121,8 @@ export default function Dashboard(props) {
 								<Table.Tr>
 									<Table.Td
 										colSpan={
-											data && data[0]
-												? Object.keys(data[0]).length
+											estudiantes && estudiantes[0]
+												? Object.keys(estudiantes[0]).length
 												: 1
 										}
 									>
