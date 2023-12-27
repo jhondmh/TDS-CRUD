@@ -34,11 +34,11 @@ class EstudiantesController extends Controller
         // return redirect('estudiantes');
 
         // Devuelve una respuesta Inertia con el estudiante recién creado
-        return Inertia::render('Estudiantes/Index', [
-            'estudiante' => $estudiante,
-            'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
-        ]);
-        // return response()->json(['estudiante' => $estudiante]);
+        // return Inertia::render('Estudiantes/Index', [
+        //     'estudiante' => $estudiante,
+        //     'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
+        // ]);
+        return response()->json(['estudiante' => $estudiante]);
     }
 
     public function update(Request $request, $id)
@@ -54,10 +54,11 @@ class EstudiantesController extends Controller
         $estudiante = Estudiantes::find($id);
         $estudiante->fill($request->input())->saveOrFail();
         // return redirect('estudiantes');
-        return Inertia::render('Estudiantes/Index', [
-            'estudiante' => $estudiante,
-            'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
-        ]);
+        // return Inertia::render('Estudiantes/Index', [
+        //     'estudiante' => $estudiante,
+        //     'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
+        // ]);
+        return response()->json(['estudiante' => $estudiante]);
     }
 
     public function destroy($id)
@@ -65,7 +66,9 @@ class EstudiantesController extends Controller
         Log::info("Método destroy llamado con ID: $id");
         $estudiante = Estudiantes::find($id);
         $estudiante->delete();
-        return redirect('estudiantes');
+        // return redirect('estudiantes');
+
+        return response()->json(['estudiante' => $estudiante]);
     }
 
     public function multipleDestroy(Request $request)

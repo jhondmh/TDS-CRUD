@@ -259,6 +259,43 @@ export default function Dashboard(props) {
 		}
 	}, [dateValue]);
 
+	const addStudent = async () => {
+		try {
+			const response = await axios.post('/estudiantes', data);
+			const newStudent = response.data.estudiante;
+			const updatedStudents = [...estudiantes, newStudent];
+			setEstudiantes(updatedStudents);
+			setSortedData(updatedStudents);
+		} catch (error) {
+			console.error('Error al añadir estudiante', error);
+		}
+	};
+
+	const updateStudent = async () => {
+		try {
+			const response = await axios.put(`/estudiantes/${data.id}`, data);
+			const updatedStudent = response.data.estudiante;
+			const updatedStudents = estudiantes.map(est =>
+				est.id === data.id ? updatedStudent : est,
+			);
+			setEstudiantes(updatedStudents);
+			setSortedData(updatedStudents);
+		} catch (error) {
+			console.error('Error al actualizar estudiante', error);
+		}
+	};
+
+	const deleteStudent = async id => {
+		try {
+			await axios.delete(`/estudiantes/${id}`);
+			const updatedStudents = estudiantes.filter(est => est.id !== id);
+			setEstudiantes(updatedStudents);
+			setSortedData(updatedStudents);
+		} catch (error) {
+			console.error('Error al eliminar estudiante', error);
+		}
+	};
+
 	const openModal = (
 		op,
 		id,
@@ -278,7 +315,7 @@ export default function Dashboard(props) {
 			apellido_pat: apellido_pat,
 			apellido_mat: apellido_mat,
 			fecha_nac: fecha_nac,
-			nota1: nota1,
+			nota1: formatGrade( nota1 ),
 			departamento: departamento,
 		});
 
@@ -295,110 +332,166 @@ export default function Dashboard(props) {
 		close();
 	};
 
-	const save = e => {
+	// const save = e => {
+	// 	e.preventDefault();
+	// 	if (operation === 1) {
+	// 		post(route('estudiantes.store'), {
+	// 			// onSuccess: () => {
+	// 			// 	ok('Estudiante añadido con éxito');
+	// 			// },
+	// 			onSuccess: response => {
+	// 				// Suponiendo que response.props.estudiante contiene el estudiante añadido
+	// 				const nuevoEstudiante = response.props.estudiante;
+	// 				setEstudiantes(estudiantesActuales => [
+	// 					...estudiantesActuales,
+	// 					nuevoEstudiante,
+	// 				]);
+	// 				setSortedData(sortedDataActuales => [
+	// 					...sortedDataActuales,
+	// 					nuevoEstudiante,
+	// 				]);
+	// 				ok('Estudiante añadido con éxito');
+	// 			},
+	// 			onError: () => {
+	// 				if (errors.nombre) {
+	// 					reset('nombre');
+	// 					NombreInput.current.focus();
+	// 				}
+	// 				if (errors.apellido_pat) {
+	// 					reset('apellido_pat');
+	// 					Apellido_Pat_Input.current.focus();
+	// 				}
+	// 				if (errors.apellido_mat) {
+	// 					reset('apellido_mat');
+	// 					Apellido_Mat_Input.current.focus();
+	// 				}
+	// 				if (errors.fecha_nac) {
+	// 					reset('fecha_nac');
+	// 					Fecha_Nac_Input.current.focus();
+	// 				}
+	// 				if (errors.nota1) {
+	// 					reset('nota1');
+	// 					Nota1Input.current.focus();
+	// 				}
+	// 				if (errors.departamento) {
+	// 					reset('departamento');
+	// 					DepartamentoInput.current.focus();
+	// 				}
+	// 			},
+	// 		});
+	// 	} else {
+	// 		put(route('estudiantes.update', data.id), {
+	// 			// onSuccess: () => {
+	// 			// 	ok('Estudiante actualizado con éxito');
+	// 			// },
+	// 			onSuccess: response => {
+	// 				// Suponiendo que response.props.estudiante contiene el estudiante actualizado
+	// 				const estudianteActualizado = response.props.estudiante;
+	// 				setEstudiantes(estudiantesActuales =>
+	// 					estudiantesActuales.map(est =>
+	// 						est.id === estudianteActualizado.id
+	// 							? estudianteActualizado
+	// 							: est,
+	// 					),
+	// 				);
+	// 				setSortedData(sortedDataActuales =>
+	// 					sortedDataActuales.map(est =>
+	// 						est.id === estudianteActualizado.id
+	// 							? estudianteActualizado
+	// 							: est,
+	// 					),
+	// 				);
+	// 				// Actualiza de forma dinámica la página
+	// 				// window.history.pushState(
+	// 				// 	{},
+	// 				// 	'',
+	// 				// 	route('estudiantes.index'),
+	// 				// );
+	// 				ok('Estudiante actualizado con éxito');
+	// 			},
+	// 			onError: () => {
+	// 				if (errors.nombre) {
+	// 					reset('nombre');
+	// 					NombreInput.current.focus();
+	// 				}
+	// 				if (errors.apellido_pat) {
+	// 					reset('apellido_pat');
+	// 					Apellido_Pat_Input.current.focus();
+	// 				}
+	// 				if (errors.apellido_mat) {
+	// 					reset('apellido_mat');
+	// 					Apellido_Mat_Input.current.focus();
+	// 				}
+	// 				if (errors.fecha_nac) {
+	// 					reset('fecha_nac');
+	// 					Fecha_Nac_Input.current.focus();
+	// 				}
+	// 				if (errors.nota1) {
+	// 					reset('nota1');
+	// 					Nota1Input.current.focus();
+	// 				}
+	// 				if (errors.departamento) {
+	// 					reset('departamento');
+	// 					DepartamentoInput.current.focus();
+	// 				}
+	// 			},
+	// 		});
+	// 	}
+	// };
+	const save = async e => {
 		e.preventDefault();
-		if (operation === 1) {
-			post(route('estudiantes.store'), {
-				// onSuccess: () => {
-				// 	ok('Estudiante añadido con éxito');
-				// },
-				onSuccess: response => {
-					// Suponiendo que response.props.estudiante contiene el estudiante añadido
-					const nuevoEstudiante = response.props.estudiante;
-					setEstudiantes(estudiantesActuales => [
-						...estudiantesActuales,
-						nuevoEstudiante,
-					]);
-					setSortedData(sortedDataActuales => [
-						...sortedDataActuales,
-						nuevoEstudiante,
-					]);
-					ok('Estudiante añadido con éxito');
-				},
-				onError: () => {
-					if (errors.nombre) {
-						reset('nombre');
-						NombreInput.current.focus();
-					}
-					if (errors.apellido_pat) {
-						reset('apellido_pat');
-						Apellido_Pat_Input.current.focus();
-					}
-					if (errors.apellido_mat) {
-						reset('apellido_mat');
-						Apellido_Mat_Input.current.focus();
-					}
-					if (errors.fecha_nac) {
-						reset('fecha_nac');
-						Fecha_Nac_Input.current.focus();
-					}
-					if (errors.nota1) {
-						reset('nota1');
-						Nota1Input.current.focus();
-					}
-					if (errors.departamento) {
-						reset('departamento');
-						DepartamentoInput.current.focus();
-					}
-				},
-			});
-		} else {
-			put(route('estudiantes.update', data.id), {
-				// onSuccess: () => {
-				// 	ok('Estudiante actualizado con éxito');
-				// },
-				onSuccess: response => {
-					// Suponiendo que response.props.estudiante contiene el estudiante actualizado
-					const estudianteActualizado = response.props.estudiante;
-					setEstudiantes(estudiantesActuales =>
-						estudiantesActuales.map(est =>
-							est.id === estudianteActualizado.id
-								? estudianteActualizado
-								: est,
-						),
-					);
-					setSortedData(sortedDataActuales =>
-						sortedDataActuales.map(est =>
-							est.id === estudianteActualizado.id
-								? estudianteActualizado
-								: est,
-						),
-					);
-                    // Actualiza de forma dinámica la página
-					// window.history.pushState(
-					// 	{},
-					// 	'',
-					// 	route('estudiantes.index'),
-					// );
-					ok('Estudiante actualizado con éxito');
-				},
-				onError: () => {
-					if (errors.nombre) {
-						reset('nombre');
-						NombreInput.current.focus();
-					}
-					if (errors.apellido_pat) {
-						reset('apellido_pat');
-						Apellido_Pat_Input.current.focus();
-					}
-					if (errors.apellido_mat) {
-						reset('apellido_mat');
-						Apellido_Mat_Input.current.focus();
-					}
-					if (errors.fecha_nac) {
-						reset('fecha_nac');
-						Fecha_Nac_Input.current.focus();
-					}
-					if (errors.nota1) {
-						reset('nota1');
-						Nota1Input.current.focus();
-					}
-					if (errors.departamento) {
-						reset('departamento');
-						DepartamentoInput.current.focus();
-					}
-				},
-			});
+
+		try {
+			let response;
+			const estudianteData = {
+				nombre: data.nombre,
+				apellido_pat: data.apellido_pat,
+				apellido_mat: data.apellido_mat,
+				fecha_nac: data.fecha_nac,
+				nota1: parseInt(data.nota1, 10), // Asegúrate de enviar un entero
+				departamento: data.departamento,
+			};
+
+			if (operation === 1) {
+				// Añadir un nuevo estudiante
+				response = await axios.post('/estudiantes', estudianteData);
+				const newStudent = response.data.estudiante;
+				const updatedStudents = [...estudiantes, newStudent];
+				setEstudiantes(updatedStudents);
+				setSortedData(updatedStudents);
+			} else {
+				// Actualizar un estudiante existente
+				response = await axios.put(
+					`/estudiantes/${data.id}`,
+					estudianteData,
+				);
+				const estudianteActualizado = response.data.estudiante;
+				setEstudiantes(estudiantesActuales =>
+					estudiantesActuales.map(est =>
+						est.id === estudianteActualizado.id
+							? estudianteActualizado
+							: est,
+					),
+				);
+			}
+
+			setSortedData(actualSortedData =>
+				actualSortedData.map(est =>
+					est.id === response.data.estudiante.id
+						? response.data.estudiante
+						: est,
+				),
+			);
+			ok(
+				'Estudiante ' +
+					(operation === 1 ? 'añadido' : 'actualizado') +
+					' con éxito',
+			);
+			closeModal();
+		} catch (error) {
+			// Manejo de errores
+			console.error('Error en la operación', error);
+			// Aquí puedes establecer los errores en el formulario o mostrarlos en la interfaz de usuario
 		}
 	};
 
@@ -407,42 +500,83 @@ export default function Dashboard(props) {
 		closeModal();
 		Swal.fire({ title: mensaje, icon: 'success' });
 	};
+	// const eliminar = (id, nombre) => {
+	// 	const alerta = Swal.mixin({ buttonsStyling: true });
+	// 	alerta
+	// 		.fire({
+	// 			title:
+	// 				'¿Estás seguro de eliminar el estudiante ' + nombre + '?',
+	// 			text: 'Esta operación es irreversible',
+	// 			icon: 'question',
+	// 			showCancelButton: true,
+	// 			// confirmButtonColor:'#3085d6',
+	// 			confirmButtonText:
+	// 				'<i class="fa-solid fa-check"></i> Sí, eliminar',
+	// 			customClass: {
+	// 				confirmButton:
+	// 					'bg-red-600 border border-transparent text-white hover:bg-red-500 active:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800',
+	// 			},
+	// 			cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
+	// 		})
+	// 		.then(result => {
+	// 			if (result.isConfirmed) {
+	// 				destroy(route('estudiantes.destroy', id), {
+	// 					// onSuccess: () => {
+	// 					// 	ok('Estudiante eliminado');
+	// 					// },
+	// 					onSuccess: () => {
+	// 						setEstudiantes(estudiantesActuales =>
+	// 							estudiantesActuales.filter(
+	// 								est => est.id !== id,
+	// 							),
+	// 						);
+	// 						setSortedData(sortedDataActuales =>
+	// 							sortedDataActuales.filter(est => est.id !== id),
+	// 						);
+	// 						ok('Estudiante eliminado');
+	// 					},
+	// 				});
+	// 			}
+	// 		});
+	// };
+
 	const eliminar = (id, nombre) => {
 		const alerta = Swal.mixin({ buttonsStyling: true });
 		alerta
 			.fire({
-				title:
-					'¿Estás seguro de eliminar el estudiante ' + nombre + '?',
+				title: `¿Estás seguro de eliminar el estudiante ${nombre}?`,
 				text: 'Esta operación es irreversible',
 				icon: 'question',
 				showCancelButton: true,
-				// confirmButtonColor:'#3085d6',
 				confirmButtonText:
 					'<i class="fa-solid fa-check"></i> Sí, eliminar',
+				cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
 				customClass: {
 					confirmButton:
 						'bg-red-600 border border-transparent text-white hover:bg-red-500 active:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800',
 				},
-				cancelButtonText: '<i class="fa-solid fa-ban"></i> Cancelar',
 			})
-			.then(result => {
+			.then(async result => {
 				if (result.isConfirmed) {
-					destroy(route('estudiantes.destroy', id), {
-						// onSuccess: () => {
-						// 	ok('Estudiante eliminado');
-						// },
-						onSuccess: () => {
-							setEstudiantes(estudiantesActuales =>
-								estudiantesActuales.filter(
-									est => est.id !== id,
-								),
-							);
-							setSortedData(sortedDataActuales =>
-								sortedDataActuales.filter(est => est.id !== id),
-							);
-							ok('Estudiante eliminado');
-						},
-					});
+					try {
+						// Realizar la petición DELETE usando axios
+						await axios.delete(`/estudiantes/${id}`);
+
+						// Actualizar el estado para reflejar la eliminación
+						setEstudiantes(estudiantesActuales =>
+							estudiantesActuales.filter(est => est.id !== id),
+						);
+						setSortedData(sortedDataActuales =>
+							sortedDataActuales.filter(est => est.id !== id),
+						);
+
+						// Mostrar confirmación de eliminación
+						ok('Estudiante eliminado');
+					} catch (error) {
+						// Manejar posibles errores aquí
+						console.error('Error al eliminar el estudiante', error);
+						// Mostrar mensaje de error al usuario
+					}
 				}
 			});
 	};

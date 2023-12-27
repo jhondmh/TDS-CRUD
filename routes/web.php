@@ -52,7 +52,6 @@ Route::middleware([
     // })->middleware(['auth:sanctum', 'verified'])->name('current-user.multipleDestroy');
 
 
-
     // Route::delete('/user', function () {
     //     request()->user()->delete();
     //     return response()->json(['status' => 'success']);
