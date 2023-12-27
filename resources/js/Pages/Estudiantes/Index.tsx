@@ -5,16 +5,17 @@ import axios from 'axios';
 import AppLayout from '@/Layouts/AppLayout';
 //funcionando
 // import { Inertia } from '@inertiajs/inertia';
-import { useForm } from '@inertiajs/react';
+// import { useForm } from '@inertiajs/react';
+import { useForm } from '@mantine/form';
 // import classNames from 'classnames';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import useRoute from '@/Hooks/useRoute';
 // import ActionSection from '@/Components/ActionSection';
 import DangerButton from '@/Components/DangerButton';
 // import DialogModal from '@/Components/DialogModal';
 // import TextInput from '@/Components/TextInput';
 // import InputLabel from '@/Components/InputLabel';
-import InputError from '@/Components/InputError';
+// import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 // import SaveButton from '@/Components/SaveButton';
@@ -43,6 +44,7 @@ import {
 	Checkbox,
 	Avatar,
 	Select,
+	Button,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import {
@@ -56,6 +58,7 @@ import {
 import TableSortClasses from '../../../css/TableSort.module.css';
 import TableSelectionClasses from '../../../css/TableSelection.module.css';
 import TableScrollAreaClasses from '../../../css/TableScrollArea.module.css';
+import ModalHeaderBodyClasses from '../../../css/ModalHeaderBody.module.css';
 
 interface RowData {
 	nombre: string;
@@ -188,16 +191,18 @@ export default function Dashboard(props) {
 	// const [modal, setModal] = useState(false);
 	const [title, setTitle] = useState('');
 	const [operation, setOperation] = useState(1);
-	const NombreInput = useRef();
-	const Apellido_Pat_Input = useRef();
-	const Apellido_Mat_Input = useRef();
-	const Nota1Input = useRef();
-	const DepartamentoInput = useRef();
+	// const NombreInput = useRef();
+	// const Apellido_Pat_Input = useRef();
+	// const Apellido_Mat_Input = useRef();
+	// const Nota1Input = useRef();
+	// const DepartamentoInput = useRef();
 
 	const [scrolled, setScrolled] = useState(false);
 
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	const [dateValue, setDateValue] = useState(null);
-	const Fecha_Nac_Input = useRef();
+	// const Fecha_Nac_Input = useRef();
 	const icon = (
 		<IconCalendar
 			style={{ width: rem(18), height: rem(18) }}
@@ -233,68 +238,105 @@ export default function Dashboard(props) {
 	// Modal
 	const [opened, { open, close }] = useDisclosure(false);
 
-	const {
-		data,
-		setData,
-		delete: destroy,
-		post,
-		put,
-		processing,
-		reset,
-		errors,
-	} = useForm({
-		id: '',
-		nombre: '',
-		apellido_pat: '',
-		apellido_mat: '',
-		fecha_nac: '',
-		nota1: '',
-		departamento: '',
+	// const {
+	// 	data,
+	// 	setData,
+	// 	delete: destroy,
+	// 	post,
+	// 	put,
+	// 	processing,
+	// 	reset,
+	// 	errors,
+	// } = useForm({
+	// 	id: '',
+	// 	nombre: '',
+	// 	apellido_pat: '',
+	// 	apellido_mat: '',
+	// 	fecha_nac: '',
+	// 	nota1: '',
+	// 	departamento: '',
+	// });
+
+	const form = useForm({
+		initialValues: {
+			id: '',
+			nombre: '',
+			apellido_pat: '',
+			apellido_mat: '',
+			fecha_nac: null, // Puede que necesites ajustar esto según tu DatePicker
+			nota1: '',
+			departamento: '',
+		},
+
+		validate: {
+			nombre: value => {
+				if (!value) return 'El nombre es requerido';
+				if (value.length > 25)
+					return 'Nombre muy largo (máx. 25 caracteres)';
+				if (/\d/.test(value))
+					return 'El nombre no debe contener números';
+				return null;
+			},
+			apellido_pat: value => {
+				if (!value) return 'Apellido Paterno requerido';
+				if (value.length > 25)
+					return 'Apellido Paterno muy largo (máx. 25 caracteres)';
+				if (/\d/.test(value))
+					return 'El Apellido Paterno no debe contener números';
+				return null;
+			},
+			apellido_mat: value => {
+				if (!value) return 'Apellido Materno requerido';
+				if (value.length > 25)
+					return 'Apellido Materno muy largo (máx. 25 caracteres)';
+				if (/\d/.test(value))
+					return 'El Apellido Materno no debe contener números';
+				return null;
+			},
+			fecha_nac: value => {
+				if (!value) return 'Fecha de nacimiento es requerida';
+				const date = new Date(value);
+				const now = new Date();
+				if (date > now)
+					return 'Fecha de nacimiento no puede ser en el futuro';
+				return null;
+			},
+			nota1: value => {
+				if (!value) return 'Nota 1 es requerida';
+				if (!/^\d+$/.test(value))
+					return 'Nota 1 debe ser un número entero';
+				const nota = parseInt(value, 10);
+				if (nota < 0) return 'Nota 1 no puede ser negativa';
+
+				if (nota > 20) return 'Nota 1 no debe estar entre 0 y 20';
+				return null;
+			},
+			departamento: value => {
+				if (!value) return 'Departamento es requerido';
+				if (value.length > 25)
+					return 'Departamento muy largo (máx. 25 caracteres)';
+				if (/\d/.test(value))
+					return 'El Departamento no debe contener números';
+				return null;
+			},
+		},
 	});
 
 	useEffect(() => {
 		if (dateValue) {
 			const formattedDate = dateValue.toISOString().split('T')[0];
-			setData({ ...data, fecha_nac: formattedDate });
+			form.setValues({ ...form.values, fecha_nac: formattedDate });
 		}
 	}, [dateValue]);
-
-	const addStudent = async () => {
-		try {
-			const response = await axios.post('/estudiantes', data);
-			const newStudent = response.data.estudiante;
-			const updatedStudents = [...estudiantes, newStudent];
-			setEstudiantes(updatedStudents);
-			setSortedData(updatedStudents);
-		} catch (error) {
-			console.error('Error al añadir estudiante', error);
-		}
-	};
-
-	const updateStudent = async () => {
-		try {
-			const response = await axios.put(`/estudiantes/${data.id}`, data);
-			const updatedStudent = response.data.estudiante;
-			const updatedStudents = estudiantes.map(est =>
-				est.id === data.id ? updatedStudent : est,
-			);
-			setEstudiantes(updatedStudents);
-			setSortedData(updatedStudents);
-		} catch (error) {
-			console.error('Error al actualizar estudiante', error);
-		}
-	};
-
-	const deleteStudent = async id => {
-		try {
-			await axios.delete(`/estudiantes/${id}`);
-			const updatedStudents = estudiantes.filter(est => est.id !== id);
-			setEstudiantes(updatedStudents);
-			setSortedData(updatedStudents);
-		} catch (error) {
-			console.error('Error al eliminar estudiante', error);
-		}
-	};
+	// useEffect(() => {
+	// 	if (dateValue) {
+	// 		const formattedDate = dateValue.toISOString().split('T')[0];
+	// 		form.setValues(prevValues => ({
+	// 			...prevValues,
+	// 			fecha_nac: formattedDate,
+	// 		}));
+	// 	}
+	// }, [dateValue, form]);
 
 	const openModal = (
 		op,
@@ -309,13 +351,13 @@ export default function Dashboard(props) {
 		// setModal(true),
 		open();
 		setOperation(op);
-		setData({
+		form.setValues({
 			id: op === 2 ? id : '',
 			nombre: nombre,
 			apellido_pat: apellido_pat,
 			apellido_mat: apellido_mat,
 			fecha_nac: fecha_nac,
-			nota1: formatGrade( nota1 ),
+			nota1: formatGrade(nota1),
 			departamento: departamento,
 		});
 
@@ -438,18 +480,17 @@ export default function Dashboard(props) {
 	// 		});
 	// 	}
 	// };
-	const save = async e => {
-		e.preventDefault();
-
+	const save = async values => {
+		setIsSubmitting(true);
 		try {
 			let response;
 			const estudianteData = {
-				nombre: data.nombre,
-				apellido_pat: data.apellido_pat,
-				apellido_mat: data.apellido_mat,
-				fecha_nac: data.fecha_nac,
-				nota1: parseInt(data.nota1, 10), // Asegúrate de enviar un entero
-				departamento: data.departamento,
+				nombre: values.nombre,
+				apellido_pat: values.apellido_pat,
+				apellido_mat: values.apellido_mat,
+				fecha_nac: values.fecha_nac,
+				nota1: parseInt(values.nota1, 10), // Asegúrate de enviar un entero
+				departamento: values.departamento,
 			};
 
 			if (operation === 1) {
@@ -462,7 +503,7 @@ export default function Dashboard(props) {
 			} else {
 				// Actualizar un estudiante existente
 				response = await axios.put(
-					`/estudiantes/${data.id}`,
+					`/estudiantes/${values.id}`,
 					estudianteData,
 				);
 				const estudianteActualizado = response.data.estudiante;
@@ -493,10 +534,11 @@ export default function Dashboard(props) {
 			console.error('Error en la operación', error);
 			// Aquí puedes establecer los errores en el formulario o mostrarlos en la interfaz de usuario
 		}
+		setIsSubmitting(false);
 	};
 
 	const ok = mensaje => {
-		reset();
+		// reset();
 		closeModal();
 		Swal.fire({ title: mensaje, icon: 'success' });
 	};
@@ -885,6 +927,7 @@ export default function Dashboard(props) {
 					onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
 					scrollbarSize={6}
 					classNames={TableScrollAreaClasses}
+                    className='mt-3'
 				>
 					{/* <Table.ScrollContainer minWidth={500}> */}
 					{/* <ScrollArea
@@ -1037,83 +1080,110 @@ export default function Dashboard(props) {
 				</ScrollArea>
 			</div>
 
-			<Modal opened={opened} onClose={close} title={title}>
+			<Modal
+				opened={opened}
+				onClose={close}
+				title={title}
+				classNames={ModalHeaderBodyClasses}
+			>
 				{/* <DialogModal.Content title={title}> */}
-				<form id="myForm" onSubmit={save} className="px-6">
-					<div className="mt-6">
-						{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
-						<TextInput
-							id="nombre"
-							name="nombre"
-							label="Nombres"
-							placeholder="Nombres"
-							ref={NombreInput}
-							required
-							value={data.nombre || ''}
-							onChange={e => setData('nombre', e.target.value)}
-							spellCheck={false}
-							// className="mt-1 block w-full"
-							data-autofocus
-						/>
-						<InputError
+
+				<ScrollArea
+					w={400}
+					// w={500}
+					h={510}
+					onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+					scrollbarSize={2}
+					classNames={TableScrollAreaClasses}
+				>
+					<form id="myForm" onSubmit={form.onSubmit(save)} className='mx-4' noValidate>
+						<div className="mt-6">
+							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+							<TextInput
+								id="nombre"
+								name="nombre"
+								label="Nombres"
+								{...form.getInputProps('nombre')}
+								placeholder="Nombres"
+								// ref={NombreInput}
+								required
+								value={form.values.nombre || ''}
+								onChange={e =>
+									form.setFieldValue('nombre', e.target.value)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+								data-autofocus
+							/>
+							{/* <InputError
 							message={errors.nombre}
 							className="mt-2"
-						></InputError>
-					</div>
-					<div className="mt-6">
-						{/* <InputLabel
+						></InputError> */}
+						</div>
+						<div className="mt-6">
+							{/* <InputLabel
 							for="apellido_pat"
 							value="Apellido Paterno"
 						></InputLabel> */}
-						<TextInput
-							id="apellido_pat"
-							name="apellido_pat"
-							label="Apellido Paterno"
-							placeholder="Apellido Paterno"
-							ref={Apellido_Pat_Input}
-							value={data.apellido_pat || ''}
-							required
-							onChange={e =>
-								setData('apellido_pat', e.target.value)
-							}
-							spellCheck={false}
-							// className="mt-1 block w-full"
-						/>
-						<InputError
+							<TextInput
+								id="apellido_pat"
+								name="apellido_pat"
+								label="Apellido Paterno"
+								{...form.getInputProps('apellido_pat')}
+								placeholder="Apellido Paterno"
+								// ref={Apellido_Pat_Input}
+								value={form.values.apellido_pat || ''}
+								required
+								onChange={e =>
+									form.setFieldValue(
+										'apellido_pat',
+										e.target.value,
+									)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+
+							{/* <InputError
 							message={errors.apellido_pat}
 							className="mt-2"
-						></InputError>
-					</div>
-					<div className="mt-6">
-						{/* <InputLabel
+						></InputError> */}
+						</div>
+						<div className="mt-6">
+							{/* <InputLabel
 							for="apellido_mat"
 							value="Apellido Materno"
 						></InputLabel> */}
-						<TextInput
-							id="apellido_mat"
-							name="apellido_mat"
-							label="Apellido Materno"
-							placeholder="Apellido Materno"
-							ref={Apellido_Mat_Input}
-							value={data.apellido_mat || ''}
-							required
-							onChange={e =>
-								setData('apellido_mat', e.target.value)
-							}
-							spellCheck={false}
-							// className="mt-1 block w-full"
-						/>
-						<InputError
+							<TextInput
+								id="apellido_mat"
+								name="apellido_mat"
+								label="Apellido Materno"
+								{...form.getInputProps('apellido_mat')}
+								placeholder="Apellido Materno"
+								// ref={Apellido_Mat_Input}
+								value={form.values.apellido_mat || ''}
+								required
+								onChange={e =>
+									form.setFieldValue(
+										'apellido_mat',
+										e.target.value,
+									)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+
+							{/* <InputError
 							message={errors.apellido_mat}
 							className="mt-2"
-						></InputError>
-					</div>
-					<div className="mt-6">
-						{/* <InputLabel
+						></InputError> */}
+						</div>
+						<div className="mt-6">
+							{/* <InputLabel
 								for="fecha_nac"
 								value="Fecha de Nacimiento"
 							></InputLabel> */}
-						{/* <TextInput
+							{/* <TextInput
 								id="fecha_nac"
 								name="fecha_nac"
 								ref={Fecha_Nac_Input}
@@ -1125,68 +1195,73 @@ export default function Dashboard(props) {
 								className="mt-1 block w-full"
 							></TextInput> */}
 
-						<DatePickerInput
-							hideOutsideDates
-							dropdownType="modal"
-							leftSection={icon}
-							leftSectionPointerEvents="none"
-							label="Fecha de Nacimiento"
-							placeholder="Selecciona una fecha"
-							// Para manejar los eventos de apertura y cierre del selector de fecha
-							// onFocus={() => setDatePickerOpen(true)}
-							// onClose={() => {
-							// 	setDatePickerOpen(false);
-							// 	if (!dateValue) {
-							// 		setDateValue(null); // restablece dateValue a null si no se seleccionó una fecha
-							// 	}
-							// }}
-							// onClick={() => {
-							// 	if (!dateValue && !datePickerOpen) {
-							// 		setDateValue(new Date()); // Para seleccionar la fecha actual al añadir un estudiante
-							// 	}
-							// }}
-							value={dateValue}
-							onChange={setDateValue}
-							minDate={minDate} // Establecer fecha mínima
-							maxDate={maxDate} // Establecer fecha máxima
-							required
-							renderDay={dayRenderer}
-						/>
+							<DatePickerInput
+								hideOutsideDates
+								dropdownType="modal"
+								leftSection={icon}
+								leftSectionPointerEvents="none"
+								label="Fecha de Nacimiento"
+								{...form.getInputProps('fecha_nac')}
+								placeholder="Selecciona una fecha"
+								// Para manejar los eventos de apertura y cierre del selector de fecha
+								// onFocus={() => setDatePickerOpen(true)}
+								// onClose={() => {
+								// 	setDatePickerOpen(false);
+								// 	if (!dateValue) {
+								// 		setDateValue(null); // restablece dateValue a null si no se seleccionó una fecha
+								// 	}
+								// }}
+								// onClick={() => {
+								// 	if (!dateValue && !datePickerOpen) {
+								// 		setDateValue(new Date()); // Para seleccionar la fecha actual al añadir un estudiante
+								// 	}
+								// }}
+								value={dateValue}
+								onChange={setDateValue}
+								minDate={minDate} // Establecer fecha mínima
+								maxDate={maxDate} // Establecer fecha máxima
+								required
+								renderDay={dayRenderer}
+							/>
 
-						<InputError
+							{/* <InputError
 							message={errors.fecha_nac}
 							className="mt-2"
-						></InputError>
-					</div>
+						></InputError> */}
+						</div>
 
-					<div className="mt-6">
-						{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
-						<TextInput
-							id="nota1"
-							name="nota1"
-							label="Nota 1"
-							placeholder="Nota 1"
-							ref={Nota1Input}
-							required
-							value={
-								data.nota1 !== null && data.nota1 !== undefined
-									? data.nota1
-									: ''
-							}
-							onChange={e => setData('nota1', e.target.value)}
-							spellCheck={false}
-							// className="mt-1 block w-full"
-							data-autofocus
-						/>
-						<InputError
+						<div className="mt-6">
+							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+							<TextInput
+								id="nota1"
+								name="nota1"
+								label="Nota 1"
+								{...form.getInputProps('nota1')}
+								placeholder="Nota 1"
+								// ref={Nota1Input}
+								required
+								value={
+									form.values.nota1 !== null &&
+									form.values.nota1 !== undefined
+										? form.values.nota1
+										: ''
+								}
+								onChange={e =>
+									form.setFieldValue('nota1', e.target.value)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+								// data-autofocus
+							/>
+							{/* <InputError
 							message={errors.nota1}
 							className="mt-2"
-						></InputError>
-					</div>
+						></InputError> */}
+						</div>
 
-					<div className="mt-6">
-						{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
-						{/* <TextInput
+						<div className="mt-6">
+							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+							{/* <TextInput
 							id="departamento"
 							name="departamento"
 							label="Departamento"
@@ -1202,46 +1277,50 @@ export default function Dashboard(props) {
 							data-autofocus
 						/> */}
 
-						<Select
-							id="departamento"
-							name="departamento"
-							label="Departamento"
-							placeholder="Departamento"
-							data={['Puno', 'Arequipa', 'Lima']}
-							ref={DepartamentoInput}
-							required
-							value={data.departamento || ''}
-							// onChange={e =>
-							// 	setData('departamento', e.target.value)
-							// }
-							onChange={value => setData('departamento', value)}
-						/>
+							<Select
+								id="departamento"
+								name="departamento"
+								label="Departamento"
+								{...form.getInputProps('departamento')}
+								placeholder="Departamento"
+								data={['Puno', 'Arequipa', 'Lima']}
+								// ref={DepartamentoInput}
+								required
+								value={form.values.departamento || ''}
+								// onChange={e =>
+								// 	setData('departamento', e.target.value)
+								// }
+								onChange={value =>
+									form.setFieldValue('departamento', value)
+								}
+							/>
 
-						<InputError
-							message={errors.departamento}
+							{/* <InputError message={errors.departamento}
 							className="mt-2"
-						></InputError>
-					</div>
-				</form>
+						></InputError> */}
+						</div>
+					</form>
+				</ScrollArea>
 				{/* </DialogModal.Content> */}
 
 				{/* <DialogModal.Footer> */}
-				<div className="px-6 pb-2 pt-7">
+				<div className="pb-2 pt-7">
 					<Flex justify="flex-end">
 						{/* <Group mt="xl"> */}
 						<SecondaryButton onClick={close} variant="default">
 							Cancel
 						</SecondaryButton>
 
-						<PrimaryButton
+						<Button
 							type="submit"
 							form="myForm"
-							processing={processing.toString()}
+							disabled={isSubmitting}
+							// processing={processing.toString()}
 							className="ml-2"
 						>
 							<i className="fa-solid fa-floppy-disk mr-2"></i>
 							Guardar
-						</PrimaryButton>
+						</Button>
 						{/* </Group> */}
 					</Flex>
 				</div>

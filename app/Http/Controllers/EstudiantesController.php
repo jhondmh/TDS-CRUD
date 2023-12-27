@@ -25,7 +25,7 @@ class EstudiantesController extends Controller
             'nombre' => 'required|max:25',
             'apellido_pat' => 'required|max:15',
             'apellido_mat' => 'required|max:15',
-            'fecha_nac' => 'required|date|after:1950-01-01|before:today',
+            'fecha_nac' => 'required|date|after:1950-01-01|before_or_equal:today',
             'nota1' => 'required|integer|between:0,20',
             'departamento' => 'required|max:25',
         ]);
@@ -47,7 +47,7 @@ class EstudiantesController extends Controller
             'nombre' => 'required|max:25',
             'apellido_pat' => 'required|max:15',
             'apellido_mat' => 'required|max:15',
-            'fecha_nac' => 'required|date|after:1950-01-01|before:today',
+            'fecha_nac' => 'required|date|after:1950-01-01|before_or_equal:today',
             'nota1' => 'required|integer|between:0,20',
             'departamento' => 'required|max:25',
         ]);
