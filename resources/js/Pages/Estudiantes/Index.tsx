@@ -279,12 +279,12 @@ export default function Dashboard(props) {
 			nombre: value => {
 				if (!value) return 'El nombre es requerido';
 				if (value.length > 25)
-					return 'Nombre muy largo (máx. 25 caracteres)';
+					return 'El Nombre muy largo (máx. 25 caracteres)';
 				if (/\d/.test(value)) return 'Nombre no debe contener números';
 				return null;
 			},
 			apellido_pat: value => {
-				if (!value) return 'Apellido Paterno requerido';
+				if (!value) return 'El Apellido Paterno requerido';
 				if (value.length > 25)
 					return 'Apellido Paterno muy largo (máx. 25 caracteres)';
 				if (/\d/.test(value))
@@ -292,7 +292,7 @@ export default function Dashboard(props) {
 				return null;
 			},
 			apellido_mat: value => {
-				if (!value) return 'Apellido Materno requerido';
+				if (!value) return 'El Apellido Materno requerido';
 				if (value.length > 25)
 					return 'Apellido Materno muy largo (máx. 25 caracteres)';
 				if (/\d/.test(value))
@@ -304,7 +304,7 @@ export default function Dashboard(props) {
 				const date = new Date(value);
 				const now = new Date();
 				if (date > now)
-					return 'Fecha de nacimiento no puede ser en el futuro';
+					return 'La Fecha de nacimiento no puede ser en el futuro';
 				return null;
 			},
 			nota1: value => {
@@ -314,7 +314,7 @@ export default function Dashboard(props) {
 				const nota = parseInt(value, 10);
 				if (nota < 0) return 'Nota 1 no puede ser negativo';
 
-				if (nota > 20) return 'Nota 1 no debe estar entre 0 y 20';
+				if (nota > 20) return 'Nota 1 debe estar entre 0 y 20';
 				return null;
 			},
 
@@ -325,7 +325,7 @@ export default function Dashboard(props) {
 				const nota = parseInt(value, 10);
 				if (nota < 0) return 'Nota 2 no puede ser negativo';
 
-				if (nota > 20) return 'Nota 2 no debe estar entre 0 y 20';
+				if (nota > 20) return 'Nota 2 debe estar entre 0 y 20';
 				return null;
 			},
 
@@ -336,11 +336,11 @@ export default function Dashboard(props) {
 				const nota = parseInt(value, 10);
 				if (nota < 0) return 'Nota 3 no puede ser negativo';
 
-				if (nota > 20) return 'Nota 3 no debe estar entre 0 y 20';
+				if (nota > 20) return 'Nota 3debe estar entre 0 y 20';
 				return null;
 			},
 			departamento: value => {
-				if (!value) return 'Departamento es requerido';
+				if (!value) return 'El Departamento es requerido';
 				if (value.length > 25)
 					return 'Departamento muy largo (máx. 25 caracteres)';
 				if (/\d/.test(value))
@@ -987,7 +987,6 @@ export default function Dashboard(props) {
 							className={cx(TableScrollAreaClasses.header, {
 								[TableScrollAreaClasses.scrolled]: scrolled,
 							})}
-
 						>
 							<Table.Tr>
 								<Table.Th
