@@ -274,7 +274,7 @@ export default function Dashboard(props) {
 				if (value.length > 25)
 					return 'Nombre muy largo (máx. 25 caracteres)';
 				if (/\d/.test(value))
-					return 'El nombre no debe contener números';
+					return 'Nombre no debe contener números';
 				return null;
 			},
 			apellido_pat: value => {
@@ -294,7 +294,7 @@ export default function Dashboard(props) {
 				return null;
 			},
 			fecha_nac: value => {
-				if (!value) return 'Fecha de nacimiento es requerida';
+				if (!value) return 'Fecha de nacimiento es requerido';
 				const date = new Date(value);
 				const now = new Date();
 				if (date > now)
@@ -302,7 +302,7 @@ export default function Dashboard(props) {
 				return null;
 			},
 			nota1: value => {
-				if (!value) return 'Nota 1 es requerida';
+				if (!value) return 'Nota 1 es requerido';
 				if (!/^-?\d+$/.test(value))
 					return 'Nota 1 debe ser un número entero';
 				const nota = parseInt(value, 10);
