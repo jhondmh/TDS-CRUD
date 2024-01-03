@@ -12,7 +12,7 @@ import InputError from '@/Components/InputError';
 import { TextInput, Group, Divider, Text, Center, Anchor } from '@mantine/core';
 
 import { GoogleButton } from './GoogleButton';
-import { TwitterButton } from './TwitterButton';
+import { GithubButton } from './GithubButton';
 import { FacebookButton } from './FacebookButton';
 
 interface Props {
@@ -55,12 +55,12 @@ export default function Login({ canResetPassword, status }: Props) {
 				<Anchor href="auth/google">
 					<GoogleButton radius="xl">Google</GoogleButton>
 				</Anchor>
-				<Anchor href="">
-					<TwitterButton radius="xl">Twitter</TwitterButton>
+				<Anchor href="auth/github">
+					<GithubButton radius="xl">Github</GithubButton>
 				</Anchor>
-				<Anchor href="auth/facebook">
+				{/* <Anchor href="auth/facebook">
 					<FacebookButton radius="xl">Facebook</FacebookButton>
-				</Anchor>
+				</Anchor> */}
 			</Group>
 
 			<Divider

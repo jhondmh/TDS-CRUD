@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\EstudiantesController;
 
 use App\Http\Controllers\GoogleController;
+use App\Http\Controllers\GithubController;
 use App\Http\Controllers\FacebookController;
 
 /*
@@ -66,6 +67,10 @@ Route::middleware([
 
 route::get('auth/google', [GoogleController::class, 'googlepage']);
 route::get('auth/google/callback', [GoogleController::class, 'googlecallback']);
+
+
+route::get('auth/github', [GithubController::class, 'githubpage']);
+route::get('auth/github/callback', [GithubController::class, 'githubcallback']);
 
 
 route::get('auth/facebook', [FacebookController::class, 'facebookpage']);

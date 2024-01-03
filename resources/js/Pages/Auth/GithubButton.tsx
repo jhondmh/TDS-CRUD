@@ -1,14 +1,14 @@
 import { Button, ButtonProps } from '@mantine/core';
-import { TwitterIcon } from '@mantinex/dev-icons';
+import { GithubIcon } from '@mantinex/dev-icons';
 
-export function TwitterButton(
+export function GithubButton(
 	props: ButtonProps & React.ComponentPropsWithoutRef<'button'>,
 ) {
 	return (
 		<Button
 			fullWidth
 			leftSection={
-				<TwitterIcon
+				<GithubIcon
 					style={{ width: '1rem', height: '1rem' }}
 					color="#00ACEE"
 				/>
