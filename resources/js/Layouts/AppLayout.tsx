@@ -20,6 +20,13 @@ interface Props {
 	renderHeader?(): JSX.Element;
 }
 
+function toCapitalized(str) {
+	return str
+		.split(' ') // Divide la cadena en palabras
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitaliza cada palabra
+		.join(' '); // Une las palabras de nuevo en una cadena
+}
+
 export default function AppLayout({
 	title,
 	renderHeader,
@@ -91,8 +98,7 @@ export default function AppLayout({
 							</div>
 
 							<div className="hidden sm:flex sm:items-center sm:ml-6">
-								<div className="ml-3 relative">
-									{/* <!-- Teams Dropdown --> */}
+								{/* <div className="ml-3 relative">
 									{page.props.jetstream.hasTeamFeatures ? (
 										<Dropdown
 											align="right"
@@ -126,7 +132,6 @@ export default function AppLayout({
 											)}
 										>
 											<div className="w-60">
-												{/* <!-- Team Management --> */}
 												{page.props.jetstream
 													.hasTeamFeatures ? (
 													<>
@@ -134,7 +139,6 @@ export default function AppLayout({
 															Administrar equipo
 														</div>
 
-														{/* <!-- Team Settings --> */}
 														<DropdownLink
 															href={route(
 																'teams.show',
@@ -146,7 +150,8 @@ export default function AppLayout({
 																],
 															)}
 														>
-															Configuraciones de equipo
+															Configuraciones de
+															equipo
 														</DropdownLink>
 
 														{page.props.jetstream
@@ -156,13 +161,13 @@ export default function AppLayout({
 																	'teams.create',
 																)}
 															>
-																Crear nuevo equipo
+																Crear nuevo
+																equipo
 															</DropdownLink>
 														) : null}
 
 														<div className="border-t border-gray-200 dark:border-gray-600" />
 
-														{/* <!-- Team Switcher --> */}
 														<div className="block px-4 py-2 text-xs text-gray-400">
 															Cambiar de equipo
 														</div>
@@ -215,7 +220,7 @@ export default function AppLayout({
 											</div>
 										</Dropdown>
 									) : null}
-								</div>
+								</div> */}
 
 								{/* <!-- Settings Dropdown --> */}
 								<div className="ml-3 relative">
@@ -244,10 +249,10 @@ export default function AppLayout({
 														type="button"
 														className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150"
 													>
-														{
+														{toCapitalized(
 															page.props.auth.user
-																?.name
-														}
+																?.name,
+														)}
 
 														<svg
 															className="ml-2 -mr-0.5 h-4 w-4"
@@ -266,7 +271,6 @@ export default function AppLayout({
 											)
 										}
 									>
-										{/* <!-- Account Management --> */}
 										<div className="block px-4 py-2 text-xs text-gray-400">
 											Administrar cuenta
 										</div>
@@ -287,7 +291,6 @@ export default function AppLayout({
 
 										<div className="border-t border-gray-200 dark:border-gray-600"></div>
 
-										{/* <!-- Authentication --> */}
 										<form onSubmit={logout}>
 											<DropdownLink as="button">
 												Cerrar sesión

@@ -23,10 +23,10 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:25', 'regex:/^[a-zA-Z\s]+$/'],
+            'name' => ['required', 'string', 'max:25', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             // 'surname' => ['required', 'string', 'max:255'],
-            'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-Z\s]+$/'],
-            'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-Z\s]+$/'],
+            'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', 'unique:users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $this->passwordRules(),
@@ -53,9 +53,18 @@ class CreateNewUser implements CreatesNewUsers
      */
     protected function createTeam(User $user): void
     {
+        // $user->ownedTeams()->save(Team::forceCreate([
+        //     'user_id' => $user->id,
+        //     'name' => 'Equipo de ' . explode(' ', $user->name, 2)[0],
+        //     'personal_team' => true,
+        // ]));
+        $nameParts = explode(' ', strtolower($user->name));
+        $capitalizedNameParts = array_map('ucfirst', $nameParts);
+        $capitalizedName = implode(' ', $capitalizedNameParts);
+
         $user->ownedTeams()->save(Team::forceCreate([
             'user_id' => $user->id,
-            'name' => 'Equipo de ' . explode(' ', $user->name, 2)[0],
+            'name' => 'Equipo de ' . $capitalizedName,
             'personal_team' => true,
         ]));
     }

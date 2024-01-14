@@ -174,7 +174,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					type="text"
 					className="mt-1 block w-full"
 					value={form.data.name}
-					onChange={e => form.setData('name', e.currentTarget.value)}
+					onChange={e => form.setData('name', e.currentTarget.value.toUpperCase())}
 					autoComplete="name"
                     spellCheck={false}
 				/>
@@ -189,7 +189,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					type="text"
 					className="mt-1 block w-full"
 					value={form.data.paternal}
-					onChange={e => form.setData('paternal', e.currentTarget.value)}
+					onChange={e => form.setData('paternal', e.currentTarget.value.toUpperCase())}
 					autoComplete="paternal"
                     spellCheck={false}
 				/>
@@ -203,7 +203,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					type="text"
 					className="mt-1 block w-full"
 					value={form.data.maternal}
-					onChange={e => form.setData('maternal', e.currentTarget.value)}
+					onChange={e => form.setData('maternal', e.currentTarget.value.toUpperCase())}
 					autoComplete="maternal"
                     spellCheck={false}
 				/>
@@ -219,6 +219,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					value={form.data.dni}
 					onChange={e => form.setData('dni', e.currentTarget.value)}
 					autoComplete="dni"
+                    maxLength={8}
                     spellCheck={false}
 				/>
 				<InputError message={form.errors.dni} className="mt-2" />

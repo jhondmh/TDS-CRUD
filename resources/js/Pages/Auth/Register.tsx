@@ -38,17 +38,21 @@ export default function Register() {
 			<Head title="Register" />
 
 			<form onSubmit={onSubmit}>
-				<div>
+				<div className="flex justify-center">
 					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
-					<Flex justify="flex-center">
+					{/* <Flex justify="flex-center"> */}
+					<div className="mt-1 block flex-grow mr-4 md:w-2/6 w-full">
 						<TextInput
 							id="name"
 							label="Nombres"
 							type="text"
-							className="mt-1 mr-2 block w-full"
+							// className="mt-1 block flex-grow mr-4 md:w-2/6 w-full"
 							value={form.data.name}
 							onChange={e =>
-								form.setData('name', e.currentTarget.value)
+								form.setData(
+									'name',
+									e.currentTarget.value.toUpperCase(),
+								)
 							}
 							required
 							autoFocus
@@ -58,18 +62,22 @@ export default function Register() {
 							className="mt-2"
 							message={form.errors.name}
 						/>
-						{/* </div> */}
+					</div>
 
-						{/* <div className="mt-4"> */}
-						{/* <InputLabel htmlFor="name">Name</InputLabel> */}
+					{/* <div className="mt-4"> */}
+					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
+					<div className="mt-1 block flex-grow mr-4 md:w-2/6 w-full">
 						<TextInput
 							id="paternal"
 							label="Apellido Paterno"
 							type="text"
-							className="mt-1 mx-2 block w-full"
+							// className="mt-1 block flex-grow mr-4 md:w-2/6 w-full"
 							value={form.data.paternal}
 							onChange={e =>
-								form.setData('paternal', e.currentTarget.value)
+								form.setData(
+									'paternal',
+									e.currentTarget.value.toUpperCase(),
+								)
 							}
 							required
 							autoComplete="paternal"
@@ -78,15 +86,20 @@ export default function Register() {
 							className="mt-2"
 							message={form.errors.paternal}
 						/>
+					</div>
 
+					<div className="mt-1 block flex-grow md:w-2/6 w-full">
 						<TextInput
 							id="maternal"
 							label="Apellido Materno"
 							type="text"
-							className="mt-1 ml-2 block w-full"
+							// className="mt-1 block flex-grow md:w-2/6 w-full"
 							value={form.data.maternal}
 							onChange={e =>
-								form.setData('maternal', e.currentTarget.value)
+								form.setData(
+									'maternal',
+									e.currentTarget.value.toUpperCase(),
+								)
 							}
 							required
 							autoComplete="maternal"
@@ -95,21 +108,24 @@ export default function Register() {
 							className="mt-2"
 							message={form.errors.maternal}
 						/>
-					</Flex>
+					</div>
+					{/* </Flex> */}
 				</div>
 
-				<div className="mt-4">
+				<div className="mt-4 flex justify-center">
 					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
-					<Flex justify="flex-center">
+					{/* <Flex justify="flex-center"> */}
+					<div className="mt-1 mr-2 block w-full">
 						<TextInput
 							id="dni"
 							label="DNI"
 							type="text"
-							className="mt-1 mr-2 block w-full"
+							// className="mt-1 mr-2 block w-full"
 							value={form.data.dni}
 							onChange={e =>
 								form.setData('dni', e.currentTarget.value)
 							}
+							maxLength={8}
 							required
 							autoComplete="dni"
 						/>
@@ -117,15 +133,16 @@ export default function Register() {
 							className="mt-2"
 							message={form.errors.dni}
 						/>
-						{/* </div> */}
+					</div>
 
-						{/* <div className="mt-4"> */}
-						{/* <InputLabel htmlFor="email">Email</InputLabel> */}
+					{/* <div className="mt-4"> */}
+					{/* <InputLabel htmlFor="email">Email</InputLabel> */}
+					<div className="mt-1 ml-2 block w-full">
 						<TextInput
 							id="email"
 							label="Email"
 							type="email"
-							className="mt-1 ml-2 block w-full"
+							// className="mt-1 ml-2 block w-full"
 							value={form.data.email}
 							onChange={e =>
 								form.setData('email', e.currentTarget.value)
@@ -136,52 +153,55 @@ export default function Register() {
 							className="mt-2"
 							message={form.errors.email}
 						/>
-					</Flex>
+					</div>
 				</div>
 
-				<div className="mt-4">
+				<div className="mt-4 flex justify-center">
 					{/* <InputLabel htmlFor="password">Password</InputLabel> */}
-					<TextInput
-						id="password"
-						label="Contraseña"
-						type="password"
-						className="mt-1 block w-full"
-						value={form.data.password}
-						onChange={e =>
-							form.setData('password', e.currentTarget.value)
-						}
-						required
-						autoComplete="new-password"
-					/>
-					<InputError
-						className="mt-2"
-						message={form.errors.password}
-					/>
-				</div>
+					<div className="mt-1 mr-4 block w-full">
+						<TextInput
+							id="password"
+							label="Contraseña"
+							type="password"
+							// className="mt-1 mr-4 block w-full"
+							value={form.data.password}
+							onChange={e =>
+								form.setData('password', e.currentTarget.value)
+							}
+							required
+							autoComplete="new-password"
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.password}
+						/>
+					</div>
 
-				<div className="mt-4">
+					{/* <div className="mt-4"> */}
 					{/* <InputLabel htmlFor="password_confirmation">
 						Confirm Password
 					</InputLabel> */}
-					<TextInput
-						id="password_confirmation"
-						label="Confirmar contraseña"
-						type="password"
-						className="mt-1 block w-full"
-						value={form.data.password_confirmation}
-						onChange={e =>
-							form.setData(
-								'password_confirmation',
-								e.currentTarget.value,
-							)
-						}
-						required
-						autoComplete="new-password"
-					/>
-					<InputError
-						className="mt-2"
-						message={form.errors.password_confirmation}
-					/>
+					<div className="mt-1 block w-full">
+						<TextInput
+							id="password_confirmation"
+							label="Confirmar contraseña"
+							type="password"
+							// className="mt-1 block w-full"
+							value={form.data.password_confirmation}
+							onChange={e =>
+								form.setData(
+									'password_confirmation',
+									e.currentTarget.value,
+								)
+							}
+							required
+							autoComplete="new-password"
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.password_confirmation}
+						/>
+					</div>
 				</div>
 
 				{page.props.jetstream.hasTermsAndPrivacyPolicyFeature && (

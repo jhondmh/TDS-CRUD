@@ -18,10 +18,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     public function update(User $user, array $input): void
     {
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:25', 'regex:/^[a-zA-Z\s]+$/'],
+            'name' => ['required', 'string', 'max:25', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             // 'surname' => ['required', 'string', 'max:255'],
-            'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-Z\s]+$/'],
-            'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-Z\s]+$/'],
+            'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
