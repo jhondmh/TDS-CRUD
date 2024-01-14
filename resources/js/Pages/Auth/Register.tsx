@@ -9,13 +9,17 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 // import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import { TextInput} from '@mantine/core';
+import { TextInput, Flex } from '@mantine/core';
 
 export default function Register() {
 	const page = useTypedPage();
 	const route = useRoute();
 	const form = useForm({
 		name: '',
+		// surname: '',
+		paternal: '',
+		maternal: '',
+		dni: '',
 		email: '',
 		password: '',
 		password_confirmation: '',
@@ -36,43 +40,110 @@ export default function Register() {
 			<form onSubmit={onSubmit}>
 				<div>
 					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
-					<TextInput
-						id="name"
-                        label="Nombres"
-						type="text"
-						className="mt-1 block w-full"
-						value={form.data.name}
-						onChange={e =>
-							form.setData('name', e.currentTarget.value)
-						}
-						required
-						autoFocus
-						autoComplete="name"
-					/>
-					<InputError className="mt-2" message={form.errors.name} />
+					<Flex justify="flex-center">
+						<TextInput
+							id="name"
+							label="Nombres"
+							type="text"
+							className="mt-1 mr-2 block w-full"
+							value={form.data.name}
+							onChange={e =>
+								form.setData('name', e.currentTarget.value)
+							}
+							required
+							autoFocus
+							autoComplete="name"
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.name}
+						/>
+						{/* </div> */}
+
+						{/* <div className="mt-4"> */}
+						{/* <InputLabel htmlFor="name">Name</InputLabel> */}
+						<TextInput
+							id="paternal"
+							label="Apellido Paterno"
+							type="text"
+							className="mt-1 mx-2 block w-full"
+							value={form.data.paternal}
+							onChange={e =>
+								form.setData('paternal', e.currentTarget.value)
+							}
+							required
+							autoComplete="paternal"
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.paternal}
+						/>
+
+						<TextInput
+							id="maternal"
+							label="Apellido Materno"
+							type="text"
+							className="mt-1 ml-2 block w-full"
+							value={form.data.maternal}
+							onChange={e =>
+								form.setData('maternal', e.currentTarget.value)
+							}
+							required
+							autoComplete="maternal"
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.maternal}
+						/>
+					</Flex>
 				</div>
 
 				<div className="mt-4">
-					{/* <InputLabel htmlFor="email">Email</InputLabel> */}
-					<TextInput
-						id="email"
-                        label="Email"
-						type="email"
-						className="mt-1 block w-full"
-						value={form.data.email}
-						onChange={e =>
-							form.setData('email', e.currentTarget.value)
-						}
-						required
-					/>
-					<InputError className="mt-2" message={form.errors.email} />
+					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
+					<Flex justify="flex-center">
+						<TextInput
+							id="dni"
+							label="DNI"
+							type="text"
+							className="mt-1 mr-2 block w-full"
+							value={form.data.dni}
+							onChange={e =>
+								form.setData('dni', e.currentTarget.value)
+							}
+							required
+							autoComplete="dni"
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.dni}
+						/>
+						{/* </div> */}
+
+						{/* <div className="mt-4"> */}
+						{/* <InputLabel htmlFor="email">Email</InputLabel> */}
+						<TextInput
+							id="email"
+							label="Email"
+							type="email"
+							className="mt-1 ml-2 block w-full"
+							value={form.data.email}
+							onChange={e =>
+								form.setData('email', e.currentTarget.value)
+							}
+							required
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.email}
+						/>
+					</Flex>
 				</div>
 
 				<div className="mt-4">
 					{/* <InputLabel htmlFor="password">Password</InputLabel> */}
 					<TextInput
 						id="password"
-                        label="Contraseña"
+						label="Contraseña"
 						type="password"
 						className="mt-1 block w-full"
 						value={form.data.password}
@@ -94,7 +165,7 @@ export default function Register() {
 					</InputLabel> */}
 					<TextInput
 						id="password_confirmation"
-                        label="Confirmar contraseña"
+						label="Confirmar contraseña"
 						type="password"
 						className="mt-1 block w-full"
 						value={form.data.password_confirmation}

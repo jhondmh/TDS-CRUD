@@ -22,6 +22,10 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 	const form = useForm({
 		_method: 'PUT',
 		name: user.name,
+		// surname: user.surname,
+		paternal: user.paternal,
+		maternal: user.maternal,
+		dni: user.dni,
 		email: user.email,
 		photo: null as File | null,
 	});
@@ -89,7 +93,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 						on={form.recentlySuccessful}
 						className="mr-3"
 					>
-						Saved.
+						Guardado.
 					</ActionMessage>
 
 					<PrimaryButton
@@ -175,6 +179,49 @@ export default function UpdateProfileInformationForm({ user }: Props) {
                     spellCheck={false}
 				/>
 				<InputError message={form.errors.name} className="mt-2" />
+			</div>
+
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="paternal" value="Apellido Paterno" />
+				<TextInput
+					id="paternal"
+					type="text"
+					className="mt-1 block w-full"
+					value={form.data.paternal}
+					onChange={e => form.setData('paternal', e.currentTarget.value)}
+					autoComplete="paternal"
+                    spellCheck={false}
+				/>
+				<InputError message={form.errors.paternal} className="mt-2" />
+			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="maternal" value="Apellido Materno" />
+				<TextInput
+					id="maternal"
+					type="text"
+					className="mt-1 block w-full"
+					value={form.data.maternal}
+					onChange={e => form.setData('maternal', e.currentTarget.value)}
+					autoComplete="maternal"
+                    spellCheck={false}
+				/>
+				<InputError message={form.errors.maternal} className="mt-2" />
+			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="dni" value="DNI" />
+				<TextInput
+					id="dni"
+					type="text"
+					className="mt-1 block w-full"
+					value={form.data.dni}
+					onChange={e => form.setData('dni', e.currentTarget.value)}
+					autoComplete="dni"
+                    spellCheck={false}
+				/>
+				<InputError message={form.errors.dni} className="mt-2" />
 			</div>
 
 			{/* <!-- Email --> */}

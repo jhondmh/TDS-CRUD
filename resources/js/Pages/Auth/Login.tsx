@@ -87,7 +87,7 @@ export default function Login({ canResetPassword, status }: Props) {
 				</div>
 
 				<div className="mt-4">
-					<InputLabel htmlFor="password">Password</InputLabel>
+					<InputLabel htmlFor="password">Contraseña</InputLabel>
 					<TextInput
 						id="password"
 						type="password"
