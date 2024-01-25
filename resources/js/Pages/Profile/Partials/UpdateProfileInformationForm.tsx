@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/core';
 import { Link, useForm } from '@inertiajs/react';
 import classNames from 'classnames';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import ActionMessage from '@/Components/ActionMessage';
 import FormSection from '@/Components/FormSection';
@@ -16,6 +16,9 @@ import { TextInput, Select } from '@mantine/core';
 
 import dataDepartamentos from '../../../Datos/DataDepartamentos';
 import dataProvincias from '../../../Datos/DataProvincias';
+
+import { DatePickerInput } from '@mantine/dates';
+import dayjs from 'dayjs';
 
 interface Props {
 	user: User;
@@ -105,12 +108,21 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 	const [provincia, setProvincia] = useState(user.provincia || '');
 	const [distrito, setDistrito] = useState(user.distrito || '');
 
-	// Efecto para inicializar estados al montar el componente
+	// // Efecto para inicializar estados al montar el componente
 	React.useEffect(() => {
 		setDepartamento(user.departamento || '');
 		setProvincia(user.provincia || '');
 		setDistrito(user.distrito || '');
+
+		setDateValue(initialDate); // Inicializa dateValue cuando el componente se monta
 	}, []);
+	// Efecto para inicializar estados al montar el componente
+	// useEffect(() => {
+	// 	setDepartamento(user.departamento || '');
+	// 	setProvincia(user.provincia || '');
+	// 	setDistrito(user.distrito || '');
+	// 	setDateValue(initialDate); // Inicializa dateValue cuando el componente se monta
+	// }, [user]);
 
 	const handleDepartamentoChange = (value: string) => {
 		const newValue = value || ''; // Proporciona un valor predeterminado
@@ -151,6 +163,23 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 
 	// Obtiene los distritos para la provincia seleccionada
 	const distritos = provincia ? dataProvincias[provincia] || [] : [];
+
+	// const [dateValue, setDateValue] = useState(null);
+	// Convierte la fecha_nac de user a un objeto Date
+	const initialDate = user.fecha_nac ? dayjs(user.fecha_nac).toDate() : null;
+
+	// Inicializa el estado dateValue con la fecha existente
+	const [dateValue, setDateValue] = useState<Date | null>(initialDate);
+
+	useEffect(() => {
+		if (dateValue) {
+			// Formatear la fecha como desees, por ejemplo, a YYYY-MM-DD
+			const formattedDate = dateValue.toISOString().split('T')[0];
+			form.setData('fecha_nac', formattedDate);
+		} else {
+			form.setData('fecha_nac', ''); // o null, dependiendo de cómo quieras manejar fechas no seleccionadas
+		}
+	}, [dateValue]);
 
 	return (
 		<FormSection
@@ -381,7 +410,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 
 			<div className="col-span-6 sm:col-span-4">
 				<InputLabel htmlFor="fecha_nac" value="Fecha de Nacimiento" />
-				<TextInput
+				{/* <TextInput
 					id="fecha_nac"
 					type="text"
 					className="mt-1 block w-full"
@@ -394,10 +423,25 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					}
 					autoComplete="fecha_nac"
 					spellCheck={false}
+				/> */}
+
+				<DatePickerInput
+					hideOutsideDates
+					dropdownType="modal"
+					// leftSection={icon}
+					leftSectionPointerEvents="none"
+					// label="Fecha de Nacimiento"
+					// {...form.getInputProps('fecha_nac')}
+					placeholder="Selecciona una fecha"
+					value={dateValue}
+					onChange={setDateValue}
+					// minDate={minDate} // Establecer fecha mínima
+					// maxDate={maxDate} // Establecer fecha máxima
+					required
+					// renderDay={dayRenderer}
 				/>
 				<InputError message={form.errors.fecha_nac} className="mt-2" />
 			</div>
-
 
 			<div className="col-span-6 sm:col-span-4">
 				<InputLabel

@@ -1,6 +1,6 @@
 import { Link, useForm, Head } from '@inertiajs/react';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import AuthenticationCard from '@/Components/AuthenticationCard';
@@ -13,6 +13,8 @@ import { TextInput, Select } from '@mantine/core';
 
 import dataDepartamentos from '../../Datos/DataDepartamentos';
 import dataProvincias from '../../Datos/DataProvincias';
+
+import { DatePickerInput } from '@mantine/dates';
 
 export default function Register() {
 	const page = useTypedPage();
@@ -75,6 +77,18 @@ export default function Register() {
 
 	// Obtiene los distritos para la provincia seleccionada
 	const distritos = provincia ? dataProvincias[provincia] || [] : [];
+
+	const [dateValue, setDateValue] = useState(null);
+
+	useEffect(() => {
+		if (dateValue) {
+			// Formatear la fecha como desees, por ejemplo, a YYYY-MM-DD
+			const formattedDate = dateValue.toISOString().split('T')[0];
+			form.setData('fecha_nac', formattedDate);
+		} else {
+			form.setData('fecha_nac', ''); // o null, dependiendo de cómo quieras manejar fechas no seleccionadas
+		}
+	}, [dateValue]);
 
 	return (
 		<AuthenticationCard>
@@ -274,7 +288,7 @@ export default function Register() {
 				<div className="mt-4 flex justify-center">
 					{/* <InputLabel htmlFor="name">Name</InputLabel> */}
 					{/* <Flex justify="flex-center"> */}
-					<div className="mt-1 mr-2 block w-full">
+					<div className="mt-1 block flex-grow md:w-2/6 mr-4 w-full">
 						<TextInput
 							id="dni"
 							label="DNI"
@@ -296,8 +310,8 @@ export default function Register() {
 
 					{/* <div className="mt-4"> */}
 					{/* <InputLabel htmlFor="email">Email</InputLabel> */}
-					<div className="mt-1 ml-2 block w-full">
-						<TextInput
+					<div className="mt-1 block flex-grow md:w-2/6 mr-4 w-full">
+						{/* <TextInput
 							id="fecha_nac"
 							label="Fecha de Nacimiento"
 							type="text"
@@ -311,27 +325,46 @@ export default function Register() {
 							}
 							required
 							autoComplete="fecha_nac"
+						/> */}
+						<DatePickerInput
+							hideOutsideDates
+							dropdownType="modal"
+							// leftSection={icon}
+							leftSectionPointerEvents="none"
+							label="Fecha de Nacimiento"
+							// {...form.getInputProps('fecha_nac')}
+							// placeholder="Selecciona una fecha"
+							value={dateValue}
+							onChange={setDateValue}
+							// minDate={minDate} // Establecer fecha mínima
+							// maxDate={maxDate} // Establecer fecha máxima
+							required
+							// renderDay={dayRenderer}
 						/>
+
 						<InputError
 							className="mt-2"
 							message={form.errors.fecha_nac}
 						/>
 					</div>
-				</div>
 
-				<div className="mt-4 block flex-grow w-full">
-					<TextInput
-						id="email"
-						label="Email"
-						type="email"
-						// className="mt-1 ml-2 block w-full"
-						value={form.data.email}
-						onChange={e =>
-							form.setData('email', e.currentTarget.value)
-						}
-						required
-					/>
-					<InputError className="mt-2" message={form.errors.email} />
+					<div className="mt-1 block flex-grow md:w-2/6 w-full">
+						<TextInput
+							id="email"
+							label="Email"
+							type="email"
+							// className="mt-1 ml-2 block w-full"
+							value={form.data.email}
+							onChange={e =>
+								form.setData('email', e.currentTarget.value)
+							}
+							required
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.email}
+						/>
+					</div>
 				</div>
 
 				<div className="mt-4 block flex-grow w-full">
