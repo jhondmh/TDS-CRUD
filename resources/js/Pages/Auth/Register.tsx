@@ -26,6 +26,7 @@ export default function Register() {
 		email: '',
 		password: '',
 		password_confirmation: '',
+		fecha_nac: '',
 
 		departamento: '',
 		provincia: '',
@@ -297,21 +298,40 @@ export default function Register() {
 					{/* <InputLabel htmlFor="email">Email</InputLabel> */}
 					<div className="mt-1 ml-2 block w-full">
 						<TextInput
-							id="email"
-							label="Email"
-							type="email"
-							// className="mt-1 ml-2 block w-full"
-							value={form.data.email}
+							id="fecha_nac"
+							label="Fecha de Nacimiento"
+							type="text"
+							// className="mt-1 block flex-grow md:w-2/6 w-full"
+							value={form.data.fecha_nac}
 							onChange={e =>
-								form.setData('email', e.currentTarget.value)
+								form.setData(
+									'fecha_nac',
+									e.currentTarget.value.toUpperCase(),
+								)
 							}
 							required
+							autoComplete="fecha_nac"
 						/>
 						<InputError
 							className="mt-2"
-							message={form.errors.email}
+							message={form.errors.fecha_nac}
 						/>
 					</div>
+				</div>
+
+				<div className="mt-4 block flex-grow w-full">
+					<TextInput
+						id="email"
+						label="Email"
+						type="email"
+						// className="mt-1 ml-2 block w-full"
+						value={form.data.email}
+						onChange={e =>
+							form.setData('email', e.currentTarget.value)
+						}
+						required
+					/>
+					<InputError className="mt-2" message={form.errors.email} />
 				</div>
 
 				<div className="mt-4 block flex-grow w-full">

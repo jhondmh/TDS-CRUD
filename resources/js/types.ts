@@ -19,6 +19,8 @@ export interface User {
   dni: string;
   email: string;
 
+  fecha_nac: string;
+
   departamento: string;
   provincia: string;
   distrito: string;

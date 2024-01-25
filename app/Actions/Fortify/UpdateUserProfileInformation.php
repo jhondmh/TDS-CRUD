@@ -25,6 +25,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:40', Rule::unique('users')->ignore($user->id)],
 
+            'fecha_nac' => ['required', 'date', 'after:1950-01-01', 'before_or_equal:today'],
+
             'departamento' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
@@ -52,6 +54,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'maternal' => $input['maternal'],
                 'dni' => $input['dni'],
                 'email' => $input['email'],
+                'fecha_nac' => $input['fecha_nac'],
                 'departamento' => $input['departamento'],
                 'provincia' => $input['provincia'],
                 'distrito' => $input['distrito'],
@@ -76,6 +79,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'dni' => $input['dni'],
             'email' => $input['email'],
             'email_verified_at' => null,
+            'fecha_nac' => $input['fecha_nac'],
             'departamento' => $input['departamento'],
             'pronvincia' => $input['pronvincia'],
             'distrito' => $input['distrito'],

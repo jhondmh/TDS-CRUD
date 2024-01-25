@@ -31,6 +31,8 @@ class CreateNewUser implements CreatesNewUsers
             'email' => ['required', 'string', 'email', 'max:40', 'unique:users'],
             'password' => $this->passwordRules(),
 
+            'fecha_nac' => ['required', 'date', 'after:1950-01-01', 'before_or_equal:today'],
+
             'departamento' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
@@ -49,6 +51,7 @@ class CreateNewUser implements CreatesNewUsers
                 'maternal' => $input['maternal'],
                 'dni' => $input['dni'],
                 'email' => $input['email'],
+                'fecha_nac' => $input['fecha_nac'],
                 'departamento' => $input['departamento'],
                 'provincia' => $input['provincia'],
                 'distrito' => $input['distrito'],

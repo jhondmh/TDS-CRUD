@@ -20,6 +20,8 @@ return new class extends Migration
             $table->char('dni', 8)->unique();
             $table->string('email', 40)->unique();
 
+            $table->date('fecha_nac');
+
             $table->string('departamento', 30);
             $table->string('provincia', 30);
             $table->string('distrito', 30);

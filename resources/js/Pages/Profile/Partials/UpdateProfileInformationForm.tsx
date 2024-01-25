@@ -30,6 +30,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 		maternal: user.maternal,
 		dni: user.dni,
 		email: user.email,
+		fecha_nac: user.fecha_nac,
 
 		departamento: user.departamento,
 		provincia: user.provincia,
@@ -377,6 +378,26 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 				/>
 				<InputError message={form.errors.distrito} className="mt-2" />
 			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="fecha_nac" value="Fecha de Nacimiento" />
+				<TextInput
+					id="fecha_nac"
+					type="text"
+					className="mt-1 block w-full"
+					value={form.data.fecha_nac}
+					onChange={e =>
+						form.setData(
+							'fecha_nac',
+							e.currentTarget.value,
+						)
+					}
+					autoComplete="fecha_nac"
+					spellCheck={false}
+				/>
+				<InputError message={form.errors.fecha_nac} className="mt-2" />
+			</div>
+
 
 			<div className="col-span-6 sm:col-span-4">
 				<InputLabel
