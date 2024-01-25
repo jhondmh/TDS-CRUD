@@ -1,6 +1,6 @@
 import { Link, useForm, Head } from '@inertiajs/react';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useState } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import AuthenticationCard from '@/Components/AuthenticationCard';
@@ -9,7 +9,10 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 // import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import { TextInput, Flex } from '@mantine/core';
+import { TextInput, Select } from '@mantine/core';
+
+import dataDepartamentos from '../../Datos/DataDepartamentos';
+import dataProvincias from '../../Datos/DataProvincias';
 
 export default function Register() {
 	const page = useTypedPage();
@@ -23,6 +26,13 @@ export default function Register() {
 		email: '',
 		password: '',
 		password_confirmation: '',
+
+		departamento: '',
+		provincia: '',
+		distrito: '',
+
+		current_address: '',
+
 		terms: false,
 	});
 
@@ -32,6 +42,38 @@ export default function Register() {
 			onFinish: () => form.reset('password', 'password_confirmation'),
 		});
 	}
+
+	const [departamento, setDepartamento] = useState('');
+	const [provincia, setProvincia] = useState('');
+	const [distrito, setDistrito] = useState('');
+
+	// Actualiza las provincias cuando cambia el departamento
+	const handleDepartamentoChange = (value: string) => {
+		form.setData('departamento', value);
+		setDepartamento(value);
+		setProvincia('');
+		setDistrito('');
+	};
+
+	// Actualiza los distritos cuando cambia la provincia
+	const handleProvinciaChange = (value: string) => {
+		form.setData('provincia', value);
+		setProvincia(value);
+		setDistrito('');
+	};
+
+	const handleDistritoChange = (value: string) => {
+		form.setData('distrito', value);
+		setDistrito(value);
+	};
+
+	// Obtiene las provincias para el departamento seleccionado
+	const provincias = departamento
+		? dataDepartamentos[departamento] || []
+		: [];
+
+	// Obtiene los distritos para la provincia seleccionada
+	const distritos = provincia ? dataProvincias[provincia] || [] : [];
 
 	return (
 		<AuthenticationCard>
@@ -109,7 +151,123 @@ export default function Register() {
 							message={form.errors.maternal}
 						/>
 					</div>
+
 					{/* </Flex> */}
+				</div>
+
+				<div className="flex justify-center mt-4">
+					<div className="mt-1 block flex-grow md:w-2/6 mr-4 w-full">
+						{/* <TextInput
+							id="departamento"
+							label="Departamento"
+							type="text"
+							// className="mt-1 block flex-grow md:w-2/6 w-full"
+							value={form.data.departamento}
+							onChange={e =>
+								form.setData(
+									'departamento',
+									e.currentTarget.value.toUpperCase(),
+								)
+							}
+							required
+							autoComplete="departamento"
+						/> */}
+						<Select
+							label="Departamento"
+							key={`departamento-${departamento}`}
+							id="departamento"
+							name="departamento"
+							value={departamento}
+							className="mt-1 block w-full"
+							autoComplete="departamento"
+							data={Object.keys(dataDepartamentos)}
+							// onChange={(value) => setData("departamento", value)}
+							// onChange={handleDepartamentoChange}
+							onChange={(value: string) =>
+								handleDepartamentoChange(value)
+							}
+							required
+							searchable
+							nothingFoundMessage="No se ha encontrado nada..."
+							clearable
+							comboboxProps={{
+								transitionProps: {
+									transition: 'pop',
+									duration: 200,
+								},
+							}}
+						/>
+
+						<InputError
+							className="mt-2"
+							message={form.errors.departamento}
+						/>
+					</div>
+
+					<div className="mt-1 block flex-grow md:w-2/6 mr-4 w-full">
+						<Select
+							label="Provincia"
+							key={`provincia-${provincia}`}
+							id="provincia"
+							name="provincia"
+							value={provincia}
+							className="mt-1 block w-full"
+							autoComplete="provincia"
+							data={provincias}
+							// onChange={(value) => setData("provincia", value)}
+							// onChange={handleProvinciaChange}
+							onChange={(value: string) =>
+								handleProvinciaChange(value)
+							}
+							required
+							searchable
+							nothingFoundMessage="No se ha encontrado nada..."
+							clearable
+							comboboxProps={{
+								transitionProps: {
+									transition: 'pop',
+									duration: 200,
+								},
+							}}
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.provincia}
+						/>
+					</div>
+
+					<div className="mt-1 block flex-grow md:w-2/6 w-full">
+						<Select
+							label="Distrito"
+							key={`distrito-${distrito}`}
+							id="distrito"
+							name="distrito"
+							value={distrito}
+							className="mt-1 block w-full"
+							autoComplete="distrito"
+							data={distritos}
+							// onChange={(value) => setData("distrito", value)}
+							// onChange={(value) => setDistrito(value)}
+
+							onChange={(value: string) =>
+								handleDistritoChange(value)
+							}
+							required
+							searchable
+							nothingFoundMessage="No se ha encontrado nada..."
+							clearable
+							comboboxProps={{
+								transitionProps: {
+									transition: 'pop',
+									duration: 200,
+								},
+							}}
+						/>
+						<InputError
+							className="mt-2"
+							message={form.errors.distrito}
+						/>
+					</div>
 				</div>
 
 				<div className="mt-4 flex justify-center">
@@ -154,6 +312,28 @@ export default function Register() {
 							message={form.errors.email}
 						/>
 					</div>
+				</div>
+
+				<div className="mt-4 block flex-grow w-full">
+					<TextInput
+						id="current_address"
+						label="Dirección actual"
+						type="text"
+						// className="mt-1 block flex-grow md:w-2/6 w-full"
+						value={form.data.current_address}
+						onChange={e =>
+							form.setData(
+								'current_address',
+								e.currentTarget.value,
+							)
+						}
+						required
+						autoComplete="current_address"
+					/>
+					<InputError
+						className="mt-2"
+						message={form.errors.current_address}
+					/>
 				</div>
 
 				<div className="mt-4 flex justify-center">

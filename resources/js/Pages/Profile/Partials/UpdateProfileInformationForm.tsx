@@ -12,7 +12,10 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { User } from '@/types';
 import useTypedPage from '@/Hooks/useTypedPage';
-import { TextInput } from '@mantine/core';
+import { TextInput, Select } from '@mantine/core';
+
+import dataDepartamentos from '../../../Datos/DataDepartamentos';
+import dataProvincias from '../../../Datos/DataProvincias';
 
 interface Props {
 	user: User;
@@ -27,6 +30,13 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 		maternal: user.maternal,
 		dni: user.dni,
 		email: user.email,
+
+		departamento: user.departamento,
+		provincia: user.provincia,
+		distrito: user.distrito,
+
+		current_address: user.current_address,
+
 		photo: null as File | null,
 	});
 	const route = useRoute();
@@ -36,6 +46,13 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 	const [verificationLinkSent, setVerificationLinkSent] = useState(false);
 
 	function updateProfileInformation() {
+		form.setData({
+			...form.data,
+			departamento,
+			provincia,
+			distrito,
+		});
+		// console.log('Enviando datos:', form.data);
 		form.post(route('user-profile-information.update'), {
 			errorBag: 'updateProfileInformation',
 			preserveScroll: true,
@@ -81,6 +98,58 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 			form.setData('photo', null);
 		}
 	}
+
+	// Lugares
+	const [departamento, setDepartamento] = useState(user.departamento || '');
+	const [provincia, setProvincia] = useState(user.provincia || '');
+	const [distrito, setDistrito] = useState(user.distrito || '');
+
+	// Efecto para inicializar estados al montar el componente
+	React.useEffect(() => {
+		setDepartamento(user.departamento || '');
+		setProvincia(user.provincia || '');
+		setDistrito(user.distrito || '');
+	}, []);
+
+	const handleDepartamentoChange = (value: string) => {
+		const newValue = value || ''; // Proporciona un valor predeterminado
+		setDepartamento(newValue);
+		setDepartamento(value);
+		setProvincia('');
+		setDistrito('');
+		form.setData({
+			...form.data, // Incluye todas las propiedades actuales
+			departamento: value,
+			provincia: '',
+			distrito: '',
+		});
+	};
+
+	const handleProvinciaChange = (value: string) => {
+		setProvincia(value);
+		setDistrito('');
+		form.setData({
+			...form.data, // Incluye todas las propiedades actuales
+			provincia: value,
+			distrito: '',
+		});
+	};
+
+	const handleDistritoChange = (value: string) => {
+		setDistrito(value);
+		form.setData({
+			...form.data, // Incluye todas las propiedades actuales
+			distrito: value,
+		});
+	};
+
+	// Obtiene las provincias para el departamento seleccionado
+	const provincias = departamento
+		? dataDepartamentos[departamento] || []
+		: [];
+
+	// Obtiene los distritos para la provincia seleccionada
+	const distritos = provincia ? dataProvincias[provincia] || [] : [];
 
 	return (
 		<FormSection
@@ -174,13 +243,17 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					type="text"
 					className="mt-1 block w-full"
 					value={form.data.name}
-					onChange={e => form.setData('name', e.currentTarget.value.toUpperCase())}
+					onChange={e =>
+						form.setData(
+							'name',
+							e.currentTarget.value.toUpperCase(),
+						)
+					}
 					autoComplete="name"
-                    spellCheck={false}
+					spellCheck={false}
 				/>
 				<InputError message={form.errors.name} className="mt-2" />
 			</div>
-
 
 			<div className="col-span-6 sm:col-span-4">
 				<InputLabel htmlFor="paternal" value="Apellido Paterno" />
@@ -189,9 +262,14 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					type="text"
 					className="mt-1 block w-full"
 					value={form.data.paternal}
-					onChange={e => form.setData('paternal', e.currentTarget.value.toUpperCase())}
+					onChange={e =>
+						form.setData(
+							'paternal',
+							e.currentTarget.value.toUpperCase(),
+						)
+					}
 					autoComplete="paternal"
-                    spellCheck={false}
+					spellCheck={false}
 				/>
 				<InputError message={form.errors.paternal} className="mt-2" />
 			</div>
@@ -203,11 +281,123 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					type="text"
 					className="mt-1 block w-full"
 					value={form.data.maternal}
-					onChange={e => form.setData('maternal', e.currentTarget.value.toUpperCase())}
+					onChange={e =>
+						form.setData(
+							'maternal',
+							e.currentTarget.value.toUpperCase(),
+						)
+					}
 					autoComplete="maternal"
-                    spellCheck={false}
+					spellCheck={false}
 				/>
 				<InputError message={form.errors.maternal} className="mt-2" />
+			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="departamento" value="Departamento" />
+				{/* <TextInput
+					id="departamento"
+					type="text"
+					className="mt-1 block w-full"
+					value={form.data.departamento}
+					onChange={e => form.setData('departamento', e.currentTarget.value)}
+					autoComplete="departamento"
+                    spellCheck={false}
+				/> */}
+
+				<Select
+					key={`departamento-${departamento}`}
+					id="departamento"
+					name="departamento"
+					value={departamento || ''}
+					className="mt-1 block w-full"
+					autoComplete="departamento"
+					data={Object.keys(dataDepartamentos)}
+					// onChange={(value) => setData("departamento", value)}
+					// onChange={handleDepartamentoChange}
+					onChange={(value: string) =>
+						handleDepartamentoChange(value)
+					}
+					searchable
+					nothingFoundMessage="No se ha encontrado nada..."
+					clearable
+					comboboxProps={{
+						transitionProps: { transition: 'pop', duration: 200 },
+					}}
+				/>
+				<InputError
+					message={form.errors.departamento}
+					className="mt-2"
+				/>
+			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="provincia" value="Provincia" />
+				<Select
+					key={`provincia-${provincia}`}
+					id="provincia"
+					name="provincia"
+					value={provincia || ''}
+					className="mt-1 block w-full"
+					autoComplete="provincia"
+					data={provincias}
+					// onChange={(value) => setData("provincia", value)}
+					// onChange={handleProvinciaChange}
+					onChange={(value: string) => handleProvinciaChange(value)}
+					searchable
+					nothingFoundMessage="No se ha encontrado nada..."
+					clearable
+					comboboxProps={{
+						transitionProps: { transition: 'pop', duration: 200 },
+					}}
+				/>
+				<InputError message={form.errors.provincia} className="mt-2" />
+			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel htmlFor="distrito" value="Distrito" />
+				<Select
+					key={`distrito-${distrito}`}
+					id="distrito"
+					name="distrito"
+					value={distrito || ''}
+					className="mt-1 block w-full"
+					autoComplete="distrito"
+					data={distritos}
+					// onChange={(value) => setData("distrito", value)}
+					// onChange={(value) => setDistrito(value)}
+
+					onChange={(value: string) => handleDistritoChange(value)}
+					searchable
+					nothingFoundMessage="No se ha encontrado nada..."
+					clearable
+					comboboxProps={{
+						transitionProps: { transition: 'pop', duration: 200 },
+					}}
+				/>
+				<InputError message={form.errors.distrito} className="mt-2" />
+			</div>
+
+			<div className="col-span-6 sm:col-span-4">
+				<InputLabel
+					htmlFor="current_address"
+					value="Dirección actual"
+				/>
+				<TextInput
+					id="current_address"
+					type="text"
+					className="mt-1 block w-full"
+					value={form.data.current_address}
+					onChange={e =>
+						form.setData('current_address', e.currentTarget.value)
+					}
+					autoComplete="current_address"
+					spellCheck={false}
+				/>
+				<InputError
+					message={form.errors.current_address}
+					className="mt-2"
+				/>
 			</div>
 
 			<div className="col-span-6 sm:col-span-4">
@@ -219,8 +409,8 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					value={form.data.dni}
 					onChange={e => form.setData('dni', e.currentTarget.value)}
 					autoComplete="dni"
-                    maxLength={8}
-                    spellCheck={false}
+					maxLength={8}
+					spellCheck={false}
 				/>
 				<InputError message={form.errors.dni} className="mt-2" />
 			</div>
@@ -234,7 +424,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 					className="mt-1 block w-full"
 					value={form.data.email}
 					onChange={e => form.setData('email', e.currentTarget.value)}
-                    spellCheck={false}
+					spellCheck={false}
 				/>
 				<InputError message={form.errors.email} className="mt-2" />
 

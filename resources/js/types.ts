@@ -18,6 +18,13 @@ export interface User {
   maternal: string;
   dni: string;
   email: string;
+
+  departamento: string;
+  provincia: string;
+  distrito: string;
+
+  current_address: string;
+
   current_team_id: Nullable<number>;
   profile_photo_path: Nullable<string>;
   profile_photo_url: string;

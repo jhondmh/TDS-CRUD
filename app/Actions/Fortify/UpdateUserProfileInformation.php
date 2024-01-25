@@ -23,7 +23,15 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($user->id)],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:40', Rule::unique('users')->ignore($user->id)],
+
+            'departamento' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+
+
+            'current_address' => ['required', 'string', 'max:70', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -44,6 +52,11 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'maternal' => $input['maternal'],
                 'dni' => $input['dni'],
                 'email' => $input['email'],
+                'departamento' => $input['departamento'],
+                'provincia' => $input['provincia'],
+                'distrito' => $input['distrito'],
+                'current_address' => $input['current_address'],
+
             ])->save();
         }
     }
@@ -63,6 +76,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'dni' => $input['dni'],
             'email' => $input['email'],
             'email_verified_at' => null,
+            'departamento' => $input['departamento'],
+            'pronvincia' => $input['pronvincia'],
+            'distrito' => $input['distrito'],
+            'current_address' => $input['current_address'],
         ])->save();
 
         $user->sendEmailVerificationNotification();

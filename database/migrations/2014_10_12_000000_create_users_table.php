@@ -18,11 +18,20 @@ return new class extends Migration
             $table->string('paternal', 15);
             $table->string('maternal', 15);
             $table->char('dni', 8)->unique();
-            $table->string('email')->unique();
+            $table->string('email', 40)->unique();
+
+            $table->string('departamento', 30);
+            $table->string('provincia', 30);
+            $table->string('distrito', 30);
+
+            $table->string('current_address', 70);
+
+            $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
+
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();

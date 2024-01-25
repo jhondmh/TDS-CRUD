@@ -28,8 +28,16 @@ class CreateNewUser implements CreatesNewUsers
             'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', 'unique:users'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:40', 'unique:users'],
             'password' => $this->passwordRules(),
+
+            'departamento' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+
+
+            'current_address' => ['required', 'string', 'max:70', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
@@ -41,6 +49,10 @@ class CreateNewUser implements CreatesNewUsers
                 'maternal' => $input['maternal'],
                 'dni' => $input['dni'],
                 'email' => $input['email'],
+                'departamento' => $input['departamento'],
+                'provincia' => $input['provincia'],
+                'distrito' => $input['distrito'],
+                'current_address' => $input['current_address'],
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 $this->createTeam($user);
