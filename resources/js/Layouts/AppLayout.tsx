@@ -95,7 +95,22 @@ export default function AppLayout({
 										Estudiantes
 									</NavLink>
 								</div>
+
+
+								<div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+									<NavLink
+										href={route('user.index')}
+										active={route().current(
+											'user.index',
+										)}
+									>
+										Usuarios
+									</NavLink>
+								</div>
+
 							</div>
+
+
 
 							<div className="hidden sm:flex sm:items-center sm:ml-6">
 								{/* <div className="ml-3 relative">
@@ -366,6 +381,15 @@ export default function AppLayout({
 								active={route().current('estudiantes.index')}
 							>
 								Estudiantes
+							</ResponsiveNavLink>
+						</div>
+
+						<div className="pt-2 pb-3 space-y-1">
+							<ResponsiveNavLink
+								href={route('user.index')}
+								active={route().current('user.index')}
+							>
+								Usuarios
 							</ResponsiveNavLink>
 						</div>
 

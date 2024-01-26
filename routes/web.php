@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\EstudiantesController;
+use App\Http\Controllers\UsersController;
 
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\FacebookController;
@@ -38,6 +39,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::resource('estudiantes', EstudiantesController::class);
+    Route::resource('user', UsersController::class);
 
     // Route::delete('/estudiantes/multiple-delete', [EstudiantesController::class, 'multipleDestroy']);
     // Route::delete('/estudiantes/{estudiante}', [EstudiantesController::class, 'destroy'])->name('estudiantes.destroy');

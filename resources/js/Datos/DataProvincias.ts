@@ -638,7 +638,6 @@ const dataProvincias: DataProvincias = {
         "San Juan de Licupis",
         "Tacabamba",
         "Tocmoche",
-        "Chalamarca",
     ],
     Contumazá: [
         "Contumazá",

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 25);
             // $table->string('surname');
-            $table->string('paternal', 15);
-            $table->string('maternal', 15);
+            $table->string('paternal', 25);
+            $table->string('maternal', 25);
             $table->char('dni', 8)->unique();
             $table->string('email', 40)->unique();
 
