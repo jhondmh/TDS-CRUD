@@ -71,6 +71,9 @@ interface RowData {
 	provincia: string;
 	distrito: string;
 	current_address: string;
+	dni: string;
+	email: string;
+	password: string;
 }
 
 interface ThProps {
@@ -282,6 +285,9 @@ export default function Dashboard({ users }: Props) {
 			provincia: '',
 			distrito: '',
 			current_address: '',
+			dni: '',
+			email: '',
+			password: '',
 		},
 
 		validate: {
@@ -348,6 +354,28 @@ export default function Dashboard({ users }: Props) {
 				if (/\d/.test(value)) return 'Nombre no debe contener números';
 				return null;
 			},
+			dni: value => {
+				if (!value) return 'El DNI es requerido';
+				if (!/^[0-9]{8}$/.test(value))
+					return 'El DNI debe tener 8 dígitos numéricos';
+				return null;
+			},
+			email: value => {
+				if (!value) return 'El correo electrónico es requerido';
+				if (!/\S+@\S+\.\S+/.test(value))
+					return 'El correo electrónico no es válido';
+				if (value.length > 40)
+					return 'El correo electrónico es muy largo (máx. 40 caracteres)';
+				return null;
+			},
+			password: value => {
+				if (!value) return 'La contraseña es requerida';
+				if (value.length < 8)
+					return 'La contraseña es muy corta (mín. 8 caracteres)';
+				if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value))
+					return 'La contraseña debe contener letras y números';
+				return null;
+			},
 		},
 	});
 
@@ -378,6 +406,9 @@ export default function Dashboard({ users }: Props) {
 		provincia,
 		distrito,
 		current_address,
+		dni,
+		email,
+		password,
 	) => {
 		// setModal(true),
 		setDepartamento(departamento);
@@ -395,6 +426,9 @@ export default function Dashboard({ users }: Props) {
 			provincia: provincia,
 			distrito: distrito,
 			current_address: current_address,
+			dni: dni,
+			email: email,
+			password: password,
 		});
 
 		if (op === 1) {
@@ -423,6 +457,9 @@ export default function Dashboard({ users }: Props) {
 				provincia: values.provincia,
 				distrito: values.distrito,
 				current_address: values.current_address,
+				dni: values.dni,
+				email: values.email,
+				password: values.password,
 			};
 
 			if (operation === 1) {
@@ -671,6 +708,9 @@ export default function Dashboard({ users }: Props) {
 				<Table.Td>{estudiante.distrito}</Table.Td>
 
 				<Table.Td>{estudiante.current_address}</Table.Td>
+				<Table.Td>{estudiante.dni}</Table.Td>
+				<Table.Td>{estudiante.email}</Table.Td>
+				{/* <Table.Td>{estudiante.password}</Table.Td> */}
 
 				<Table.Td>
 					<div className="flex justify-center items-center w-full h-full">
@@ -687,6 +727,9 @@ export default function Dashboard({ users }: Props) {
 									estudiante.provincia,
 									estudiante.distrito,
 									estudiante.current_address,
+									estudiante.dni,
+									estudiante.email,
+									estudiante.password,
 								)
 							}
 						>
@@ -935,6 +978,20 @@ export default function Dashboard({ users }: Props) {
 									onSort={() => setSorting('current_address')}
 								>
 									Dirección actual
+								</Th>
+								<Th
+									sorted={sortBy === 'dni'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('dni')}
+								>
+									DNI
+								</Th>
+								<Th
+									sorted={sortBy === 'email'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('email')}
+								>
+									Email
 								</Th>
 
 								<Table.Th className="px-2 py-2">
@@ -1262,6 +1319,92 @@ export default function Dashboard({ users }: Props) {
 								spellCheck={false}
 								// className="mt-1 block w-full"
 							/>
+						</div>
+
+						<div className="mt-6">
+							{/* <InputLabel
+							for="paternal"
+							value="Apellido Paterno"
+						></InputLabel> */}
+							<TextInput
+								id="dni"
+								name="dni"
+								label="DNI"
+								{...form.getInputProps('dni')}
+								placeholder="DNI"
+								// ref={Apellido_Pat_Input}
+								value={form.values.dni || ''}
+								required
+								onChange={e =>
+									form.setFieldValue('dni', e.target.value)
+								}
+								maxLength={8}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+
+							{/* <InputError
+							message={errors.paternal}
+							className="mt-2"
+						></InputError> */}
+						</div>
+
+						<div className="mt-6">
+							{/* <InputLabel
+							for="paternal"
+							value="Apellido Paterno"
+						></InputLabel> */}
+							<TextInput
+								id="email"
+								name="email"
+								label="Email"
+								{...form.getInputProps('email')}
+								placeholder="Email"
+								// ref={Apellido_Pat_Input}
+								value={form.values.email || ''}
+								required
+								onChange={e =>
+									form.setFieldValue('email', e.target.value)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+
+							{/* <InputError
+							message={errors.paternal}
+							className="mt-2"
+						></InputError> */}
+						</div>
+
+						<div className="mt-6 mb-2">
+							{/* <InputLabel
+							for="paternal"
+							value="Apellido Paterno"
+						></InputLabel> */}
+							<TextInput
+								id="password"
+								name="password"
+								label="Contraseña"
+								{...form.getInputProps('password')}
+								placeholder="Contraseña"
+								// ref={Apellido_Pat_Input}
+								value={form.values.password || ''}
+								required
+								onChange={e =>
+									form.setFieldValue(
+										'password',
+										e.target.value,
+									)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+								type="password"
+							/>
+
+							{/* <InputError
+							message={errors.paternal}
+							className="mt-2"
+						></InputError> */}
 						</div>
 					</form>
 				</ScrollArea>

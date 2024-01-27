@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+
 
 class UsersController extends Controller
 {
@@ -30,16 +32,17 @@ class UsersController extends Controller
             'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'current_address' => ['required', 'string', 'max:70', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,()-]+$/'],
-        ]);
-        $user = new User($request->input());
-        $user->save();
-        // return redirect('users');
 
-        // Devuelve una respuesta Inertia con el user recién creado
-        // return Inertia::render('User/Index', [
-        //     'user' => $user,
-        //     'users' => User::all() // Opcional: devuelve también la lista actualizada
-        // ]);
+            'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:40', 'unique:users'],
+            'password' => ['required', 'string'],
+        ]);
+        // $user = new User($request->input());
+        // $user->save();
+        $user = new User($request->only('name', 'paternal', 'maternal', 'fecha_nac', 'departamento', 'provincia', 'distrito', 'current_address', 'dni', 'email'));
+        $user->password = Hash::make($request->password);
+        $user->save();
+
         return response()->json(['user' => $user]);
     }
 
@@ -55,9 +58,22 @@ class UsersController extends Controller
             'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
             'current_address' => ['required', 'string', 'max:70', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,()-]+$/'],
+
+
+            'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:40', 'unique:users'],
+            'password' => ['required', 'string'],
         ]);
+        // $user = User::find($id);
+        // $user->fill($request->input())->saveOrFail();
         $user = User::find($id);
-        $user->fill($request->input())->saveOrFail();
+        $user->fill($request->only('name', 'paternal', 'maternal', 'fecha_nac', 'departamento', 'provincia', 'distrito', 'current_address', 'dni', 'email'));
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->saveOrFail();
+
+
         return response()->json(['user' => $user]);
     }
 
