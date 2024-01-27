@@ -23,6 +23,7 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import WarningButton from '@/Components/WarningButton';
 // import SecondaryButton from '@/Components/SecondaryButton';
 import Swal from 'sweetalert2';
+import '@sweetalert2/themes/dark/dark.css';
 
 import { useDisclosure } from '@mantine/hooks';
 
@@ -324,7 +325,7 @@ export default function Dashboard({ users }: Props) {
 				return null;
 			},
 			provincia: value => {
-				if (!value) return 'El Provincia es requerido';
+				if (!value) return 'La Provincia es requerida';
 				if (value.length > 30)
 					return 'Provincia muy largo (máx. 30 caracteres)';
 				if (/\d/.test(value))
@@ -379,6 +380,9 @@ export default function Dashboard({ users }: Props) {
 		current_address,
 	) => {
 		// setModal(true),
+		setDepartamento(departamento);
+		setProvincia(provincia);
+		setDistrito(distrito);
 		open();
 		setOperation(op);
 		form.setValues({
@@ -632,8 +636,8 @@ export default function Dashboard({ users }: Props) {
 						});
 				}
 
-				console.log('seleccion despues de post', selection);
-				console.log('idsToSend despues de post', idsToSend);
+				// console.log('seleccion despues de post', selection);
+				// console.log('idsToSend despues de post', idsToSend);
 			});
 	};
 
@@ -653,9 +657,11 @@ export default function Dashboard({ users }: Props) {
 					/>
 				</Table.Td>
 				<Table.Td>{i + 1}</Table.Td>
-				<Table.Td>{estudiante.name}</Table.Td>
-				<Table.Td>{estudiante.paternal}</Table.Td>
-				<Table.Td>{estudiante.maternal}</Table.Td>
+				<Table.Td style={{ whiteSpace: 'nowrap' }}>
+					{capitalizeWords(estudiante.name)}
+				</Table.Td>
+				<Table.Td>{capitalizeWords(estudiante.paternal)}</Table.Td>
+				<Table.Td>{capitalizeWords(estudiante.maternal)}</Table.Td>
 				<Table.Td>
 					{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
 				</Table.Td>
@@ -778,6 +784,12 @@ export default function Dashboard({ users }: Props) {
 
 	// Obtiene los distritos para la provincia seleccionada
 	const distritos = provincia ? dataProvincias[provincia] || [] : [];
+
+	function capitalizeWords(str: string): string {
+		return str.toLowerCase().replace(/(?:^|\s)\S/g, a => {
+			return a.toUpperCase();
+		});
+	}
 
 	return (
 		<AppLayout
@@ -995,7 +1007,10 @@ export default function Dashboard({ users }: Props) {
 								required
 								value={form.values.name || ''}
 								onChange={e =>
-									form.setFieldValue('name', e.target.value)
+									form.setFieldValue(
+										'name',
+										e.target.value.toUpperCase(),
+									)
 								}
 								spellCheck={false}
 								// className="mt-1 block w-full"
@@ -1019,7 +1034,7 @@ export default function Dashboard({ users }: Props) {
 								onChange={e =>
 									form.setFieldValue(
 										'paternal',
-										e.target.value,
+										e.target.value.toUpperCase(),
 									)
 								}
 								spellCheck={false}
@@ -1048,7 +1063,7 @@ export default function Dashboard({ users }: Props) {
 								onChange={e =>
 									form.setFieldValue(
 										'maternal',
-										e.target.value,
+										e.target.value.toUpperCase(),
 									)
 								}
 								spellCheck={false}
@@ -1142,7 +1157,7 @@ export default function Dashboard({ users }: Props) {
 								nothingFoundMessage="No se ha encontrado nada..."
 								clearable
 								comboboxProps={{
-                                    dropdownPadding: 13,
+									dropdownPadding: 13,
 									transitionProps: {
 										transition: 'pop',
 										duration: 200,
@@ -1181,7 +1196,7 @@ export default function Dashboard({ users }: Props) {
 								nothingFoundMessage="No se ha encontrado nada..."
 								clearable
 								comboboxProps={{
-                                    dropdownPadding: 13,
+									dropdownPadding: 13,
 									transitionProps: {
 										transition: 'pop',
 										duration: 200,
@@ -1218,7 +1233,7 @@ export default function Dashboard({ users }: Props) {
 								nothingFoundMessage="No se ha encontrado nada..."
 								clearable
 								comboboxProps={{
-                                    dropdownPadding: 13,
+									dropdownPadding: 13,
 									transitionProps: {
 										transition: 'pop',
 										duration: 200,

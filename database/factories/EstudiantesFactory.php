@@ -20,9 +20,9 @@ class EstudiantesFactory extends Factory
         $departamentos = ['Puno', 'Arequipa', 'Lima'];
 
         return [
-            'nombre' => $this->faker->firstName(),
-            'apellido_pat' => $this->faker->lastName(),
-            'apellido_mat' => $this->faker->lastName(),
+            'nombre' => strtoupper($this->faker->firstName()),
+            'apellido_pat' => strtoupper($this->faker->lastName()),
+            'apellido_mat' => strtoupper($this->faker->lastName()),
             'fecha_nac' => $this->faker->date($format = 'Y-m-d', $max = 'now'),
             'nota1' => $this->faker->numberBetween($min = 0, $max = 20),
             'nota2' => $this->faker->numberBetween($min = 0, $max = 20),

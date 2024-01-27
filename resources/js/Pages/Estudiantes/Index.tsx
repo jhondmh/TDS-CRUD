@@ -21,7 +21,10 @@ import SecondaryButton from '@/Components/SecondaryButton';
 // import SaveButton from '@/Components/SaveButton';
 import WarningButton from '@/Components/WarningButton';
 // import SecondaryButton from '@/Components/SecondaryButton';
+// import Swal from 'sweetalert2';
+
 import Swal from 'sweetalert2';
+import '@sweetalert2/themes/dark/dark.css';
 
 import { useDisclosure } from '@mantine/hooks';
 
@@ -866,9 +869,11 @@ export default function Dashboard(props) {
 					/>
 				</Table.Td>
 				<Table.Td>{i + 1}</Table.Td>
-				<Table.Td>{estudiante.nombre}</Table.Td>
-				<Table.Td>{estudiante.apellido_pat}</Table.Td>
-				<Table.Td>{estudiante.apellido_mat}</Table.Td>
+				<Table.Td style={{ whiteSpace: 'nowrap' }}>
+					{capitalizeWords(estudiante.nombre)}
+				</Table.Td>
+				<Table.Td>{capitalizeWords(estudiante.apellido_pat)}</Table.Td>
+				<Table.Td>{capitalizeWords(estudiante.apellido_mat)}</Table.Td>
 				<Table.Td>
 					{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
 				</Table.Td>
@@ -915,6 +920,12 @@ export default function Dashboard(props) {
 			</Table.Tr>
 		);
 	});
+
+	function capitalizeWords(str: string): string {
+		return str.toLowerCase().replace(/(?:^|\s)\S/g, a => {
+			return a.toUpperCase();
+		});
+	}
 
 	return (
 		<AppLayout
@@ -1122,7 +1133,8 @@ export default function Dashboard(props) {
 									<Table.Td
 										colSpan={
 											estudiantes && estudiantes[0]
-												? Object.keys(estudiantes[0]).length
+												? Object.keys(estudiantes[0])
+														.length
 												: 1
 										}
 									>
@@ -1175,7 +1187,7 @@ export default function Dashboard(props) {
 								required
 								value={form.values.nombre || ''}
 								onChange={e =>
-									form.setFieldValue('nombre', e.target.value)
+									form.setFieldValue('nombre', e.target.value.toUpperCase())
 								}
 								spellCheck={false}
 								// className="mt-1 block w-full"
@@ -1203,7 +1215,7 @@ export default function Dashboard(props) {
 								onChange={e =>
 									form.setFieldValue(
 										'apellido_pat',
-										e.target.value,
+										e.target.value.toUpperCase(),
 									)
 								}
 								spellCheck={false}
@@ -1220,7 +1232,7 @@ export default function Dashboard(props) {
 							for="apellido_mat"
 							value="Apellido Materno"
 						></InputLabel> */}
-							<TextInput
+							{/* <TextInput
 								id="apellido_mat"
 								name="apellido_mat"
 								label="Apellido Materno"
@@ -1232,7 +1244,26 @@ export default function Dashboard(props) {
 								onChange={e =>
 									form.setFieldValue(
 										'apellido_mat',
-										e.target.value,
+										e.target.value.toUpperCase,
+									)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/> */}
+
+							<TextInput
+								id="apellido_mat"
+								name="apellido_mat"
+								label="Apellido Materno"
+								{...form.getInputProps('apellido_mat')}
+								placeholder="Apellido Materno"
+								// ref={Apellido_Pat_Input}
+								value={form.values.apellido_mat || ''}
+								required
+								onChange={e =>
+									form.setFieldValue(
+										'apellido_mat',
+										e.target.value.toUpperCase(),
 									)
 								}
 								spellCheck={false}

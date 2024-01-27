@@ -10,7 +10,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { RouteContext } from '@/Hooks/useRoute';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-import { MantineProvider, createTheme, Input, ScrollArea } from '@mantine/core';
+import { MantineProvider, createTheme, Input } from '@mantine/core';
 import inputClasses from '../css/Input.module.css';
 
 const myTheme = createTheme({
