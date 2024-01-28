@@ -446,7 +446,7 @@ export default function AppLayout({
 								</form>
 
 								{/* <!-- Team Management --> */}
-								{page.props.jetstream.hasTeamFeatures ? (
+								{/* {page.props.jetstream.hasTeamFeatures ? (
 									<>
 										<div className="border-t border-gray-200 dark:border-gray-600"></div>
 
@@ -454,7 +454,6 @@ export default function AppLayout({
 											Administrar equipo
 										</div>
 
-										{/* <!-- Team Settings --> */}
 										<ResponsiveNavLink
 											href={route('teams.show', [
 												page.props.auth.user
@@ -480,7 +479,6 @@ export default function AppLayout({
 
 										<div className="border-t border-gray-200 dark:border-gray-600"></div>
 
-										{/* <!-- Team Switcher --> */}
 										<div className="block px-4 py-2 text-xs text-gray-400">
 											Cambiar de equipo
 										</div>
@@ -519,7 +517,8 @@ export default function AppLayout({
 											),
 										)}
 									</>
-								) : null}
+								) : null} */}
+
 							</div>
 						</div>
 					</div>
