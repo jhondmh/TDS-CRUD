@@ -28,7 +28,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'paternal', 'maternal', 'dni', 'email', 'fecha_nac','departamento', 'provincia', 'distrito', 'current_address', 'password', 'facebook_id',
+        'name', 'paternal', 'maternal', 'dni', 'email', 'fecha_nac', 'departamento', 'provincia', 'distrito', 'current_address', 'password', 'facebook_id',
     ];
 
     /**
@@ -60,4 +60,16 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    // Método para obtener los nombres de los roles
+    public function getRoleNamesAttribute()
+    {
+        return $this->roles->pluck('name');
+    }
+
+    // Método para obtener los nombres de los permisos
+    public function getPermissionNamesAttribute()
+    {
+        return $this->getAllPermissions()->pluck('name');
+    }
 }

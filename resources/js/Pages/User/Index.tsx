@@ -63,6 +63,8 @@ import ModalHeaderBodyClasses from '../../../css/ModalHeaderBody.module.css';
 import dataDepartamentos from '../../Datos/DataDepartamentos';
 import dataProvincias from '../../Datos/DataProvincias';
 
+import Can from '@/Components/Can';
+
 interface RowData {
 	name: string;
 	paternal: string;
@@ -993,7 +995,6 @@ export default function Dashboard({ users }: Props) {
 								>
 									Email
 								</Th>
-
 								<Table.Th className="px-2 py-2">
 									Editar
 								</Table.Th>

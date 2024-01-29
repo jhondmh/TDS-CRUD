@@ -36,6 +36,14 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            // Agregar roles y permisos del usuario autenticado
+            'auth' => function () use ($request) {
+                return [
+                    'user' => $request->user() ? $request->user()->only('id', 'name', 'email', 'roleNames', 'permissionNames') : null,
+                    'roles' => optional($request->user())->roleNames ?? [],
+                    'permissions' => optional($request->user())->permissionNames ?? [],
+                ];
+            },
         ];
     }
 }

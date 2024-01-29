@@ -12,6 +12,9 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
 
+// import { useAuth } from '@/Contexts/AuthContext';
+import Can from '@/Components/Can';
+
 // import { Image } from '@mantine/core';
 // import logo from '/resources/images/LogoUNAP.png';
 
@@ -55,6 +58,12 @@ export default function AppLayout({
 		router.post(route('logout'));
 	}
 
+	// const { roles, permissions } = useAuth();
+
+	// // Agrega estas líneas para depurar
+	// console.log('Roles del usuario en el contexto', roles);
+	// console.log('Permisos del usuario en el contexto', permissions);
+
 	return (
 		<div>
 			<Head title={title} />
@@ -96,21 +105,19 @@ export default function AppLayout({
 									</NavLink>
 								</div>
 
-
-								<div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-									<NavLink
-										href={route('user.index')}
-										active={route().current(
-											'user.index',
-										)}
-									>
-										Usuarios
-									</NavLink>
-								</div>
-
+								<Can perform="user.index">
+									<div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+										<NavLink
+											href={route('user.index')}
+											active={route().current(
+												'user.index',
+											)}
+										>
+											Usuarios
+										</NavLink>
+									</div>
+								</Can>
 							</div>
-
-
 
 							<div className="hidden sm:flex sm:items-center sm:ml-6">
 								{/* <div className="ml-3 relative">
@@ -518,7 +525,6 @@ export default function AppLayout({
 										)}
 									</>
 								) : null} */}
-
 							</div>
 						</div>
 					</div>

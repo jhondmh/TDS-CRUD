@@ -12,6 +12,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 import { MantineProvider, createTheme, Input } from '@mantine/core';
 import inputClasses from '../css/Input.module.css';
+import { AuthProvider } from './Contexts/AuthContext';
 
 const myTheme = createTheme({
 	primaryColor: 'blue',
@@ -39,12 +40,18 @@ createInertiaApp({
 			import.meta.glob('./Pages/**/*.tsx'),
 		),
 	setup({ el, App, props }) {
+		// const { auth } = props.initialPage.props;
+		// const root = createRoot(el);
+		const { auth } = props.initialPage.props;
 		const root = createRoot(el);
+		console.log('Auth props en app.tsx', auth);
 		return root.render(
 			<MantineProvider defaultColorScheme="dark" theme={myTheme}>
-				<RouteContext.Provider value={(window as any).route}>
-					<App {...props} />
-				</RouteContext.Provider>
+				<AuthProvider auth={auth}>
+					<RouteContext.Provider value={(window as any).route}>
+						<App {...props} />
+					</RouteContext.Provider>
+				</AuthProvider>
 				,
 			</MantineProvider>,
 		);
