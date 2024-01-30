@@ -29,7 +29,7 @@ class HandleInertiaRequests extends Middleware
                 return array_merge((new Ziggy)->toArray(), ['location' => url()->current()]);
             },
             'auth' => [
-                'user' => $user ? $user->only('id', 'name', 'email') : null,
+                'user' => $user ? $user->only('id', 'name', 'paternal', 'maternal', 'dni', 'email', 'fecha_nac', 'departamento', 'provincia', 'distrito', 'current_address') : null,
                 'roles' => $roles,
                 'permissions' => $permissions,
             ],

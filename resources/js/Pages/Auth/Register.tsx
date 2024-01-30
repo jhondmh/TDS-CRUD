@@ -9,12 +9,20 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 // import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
-import { TextInput, Select } from '@mantine/core';
+import { rem, TextInput, Select, Indicator } from '@mantine/core';
 
 import dataDepartamentos from '../../Datos/DataDepartamentos';
 import dataProvincias from '../../Datos/DataProvincias';
 
 import { DatePickerInput } from '@mantine/dates';
+
+import {
+	IconCalendar,
+	IconSelector,
+	IconChevronDown,
+	IconChevronUp,
+	IconSearch,
+} from '@tabler/icons-react';
 
 export default function Register() {
 	const page = useTypedPage();
@@ -80,6 +88,36 @@ export default function Register() {
 
 	const [dateValue, setDateValue] = useState(null);
 
+	const icon = (
+		<IconCalendar
+			style={{ width: rem(18), height: rem(18) }}
+			stroke={1.5}
+		/>
+	);
+
+	// Fecha mínima: 1 de Enero de 1900
+	const minDate = new Date(1900, 0, 1);
+
+	// Fecha máxima: Fecha actual
+	const maxDate = new Date();
+
+	const dayRenderer = date => {
+		const day = date.getDate();
+		const today = new Date();
+
+		// Verifica si el día actual es igual al día que se está renderizando
+		const isToday =
+			day === today.getDate() &&
+			date.getMonth() === today.getMonth() &&
+			date.getFullYear() === today.getFullYear();
+
+		return (
+			<Indicator size={6} color="red" offset={-5} disabled={!isToday}>
+				<div>{day}</div>
+			</Indicator>
+		);
+	};
+
 	useEffect(() => {
 		if (dateValue) {
 			// Formatear la fecha como desees, por ejemplo, a YYYY-MM-DD
@@ -102,6 +140,7 @@ export default function Register() {
 						<TextInput
 							id="name"
 							label="Nombres"
+							placeholder="Nombres"
 							type="text"
 							// className="mt-1 block flex-grow mr-4 md:w-2/6 w-full"
 							value={form.data.name}
@@ -127,6 +166,7 @@ export default function Register() {
 						<TextInput
 							id="paternal"
 							label="Apellido Paterno"
+							placeholder="Apellido Paterno"
 							type="text"
 							// className="mt-1 block flex-grow mr-4 md:w-2/6 w-full"
 							value={form.data.paternal}
@@ -149,6 +189,7 @@ export default function Register() {
 						<TextInput
 							id="maternal"
 							label="Apellido Materno"
+							placeholder="Apellido Materno"
 							type="text"
 							// className="mt-1 block flex-grow md:w-2/6 w-full"
 							value={form.data.maternal}
@@ -189,6 +230,7 @@ export default function Register() {
 						/> */}
 						<Select
 							label="Departamento"
+							placeholder="Departamento"
 							key={`departamento-${departamento}`}
 							id="departamento"
 							name="departamento"
@@ -222,6 +264,7 @@ export default function Register() {
 					<div className="mt-1 block flex-grow md:w-2/6 mr-4 w-full">
 						<Select
 							label="Provincia"
+							placeholder="Provincia"
 							key={`provincia-${provincia}`}
 							id="provincia"
 							name="provincia"
@@ -254,6 +297,7 @@ export default function Register() {
 					<div className="mt-1 block flex-grow md:w-2/6 w-full">
 						<Select
 							label="Distrito"
+							placeholder="Distrito"
 							key={`distrito-${distrito}`}
 							id="distrito"
 							name="distrito"
@@ -292,6 +336,7 @@ export default function Register() {
 						<TextInput
 							id="dni"
 							label="DNI"
+							placeholder="DNI"
 							type="text"
 							// className="mt-1 mr-2 block w-full"
 							value={form.data.dni}
@@ -329,17 +374,18 @@ export default function Register() {
 						<DatePickerInput
 							hideOutsideDates
 							dropdownType="modal"
-							// leftSection={icon}
+							leftSection={icon}
 							leftSectionPointerEvents="none"
 							label="Fecha de Nacimiento"
+							placeholder="Selecciona fecha"
 							// {...form.getInputProps('fecha_nac')}
 							// placeholder="Selecciona una fecha"
 							value={dateValue}
 							onChange={setDateValue}
-							// minDate={minDate} // Establecer fecha mínima
-							// maxDate={maxDate} // Establecer fecha máxima
+							minDate={minDate} // Establecer fecha mínima
+							maxDate={maxDate} // Establecer fecha máxima
 							required
-							// renderDay={dayRenderer}
+							renderDay={dayRenderer}
 						/>
 
 						<InputError
@@ -352,6 +398,7 @@ export default function Register() {
 						<TextInput
 							id="email"
 							label="Email"
+							placeholder="Email"
 							type="email"
 							// className="mt-1 ml-2 block w-full"
 							value={form.data.email}
@@ -371,6 +418,7 @@ export default function Register() {
 					<TextInput
 						id="current_address"
 						label="Dirección actual"
+						placeholder="Proporciona tu dirección actual"
 						type="text"
 						// className="mt-1 block flex-grow md:w-2/6 w-full"
 						value={form.data.current_address}
@@ -395,6 +443,7 @@ export default function Register() {
 						<TextInput
 							id="password"
 							label="Contraseña"
+							placeholder="Escribe tu contraseña"
 							type="password"
 							// className="mt-1 mr-4 block w-full"
 							value={form.data.password}
@@ -418,6 +467,7 @@ export default function Register() {
 						<TextInput
 							id="password_confirmation"
 							label="Confirmar contraseña"
+							placeholder="Confirma tu contraseña"
 							type="password"
 							// className="mt-1 block w-full"
 							value={form.data.password_confirmation}
