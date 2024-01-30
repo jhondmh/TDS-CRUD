@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 
 class UsersController extends Controller
@@ -64,8 +65,9 @@ class UsersController extends Controller
             'current_address' => ['required', 'string', 'max:70', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,()-]+$/'],
 
 
-            'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', 'unique:users'],
-            'email' => ['required', 'string', 'email', 'max:40', 'unique:users'],
+            'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', Rule::unique('users')->ignore($id)],
+            'email' => ['required', 'string', 'email', 'max:40', Rule::unique('users')->ignore($id)],
+
             'password' => ['required', 'string'],
         ]);
         // $user = User::find($id);

@@ -4,6 +4,7 @@ namespace App\Actions\Fortify;
 
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Estudiantes;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -60,6 +61,21 @@ class CreateNewUser implements CreatesNewUsers
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 $this->createTeam($user);
+                // Asignar el rol 'student' al usuario
+                $user->assignRole('student');
+
+                // Crear un registro en la tabla estudiantes si el usuario tiene el rol 'student'
+                if ($user->hasRole('student')) {
+                    Estudiantes::create([
+                        'user_id' => $user->id,
+                        // Establece los valores por defecto o basados en $input para 'nota1', 'nota2', 'nota3', etc.
+                        'nota1' => $input['nota1'] ?? 0, // Asigna 0 si no hay valor
+                        'nota2' => $input['nota2'] ?? 0, // Asigna 0 si no hay valor
+                        'nota3' => $input['nota3'] ?? 0, // Asigna 0 si no hay valor
+
+                        // Añade cualquier otro campo que necesites inicializar
+                    ]);
+                }
             });
         });
     }

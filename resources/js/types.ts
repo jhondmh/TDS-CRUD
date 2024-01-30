@@ -36,6 +36,36 @@ export interface User {
   updated_at: DateTime;
 }
 
+
+export interface Estudiante {
+  id: number;
+  name: string;
+//   surname: string;
+  paternal: string;
+  maternal: string;
+  dni: string;
+  email: string;
+
+  fecha_nac: string;
+
+  departamento: string;
+  provincia: string;
+  distrito: string;
+
+  current_address: string;
+  nota1: number;
+  nota2: number;
+  nota3: number;
+
+  current_team_id: Nullable<number>;
+  profile_photo_path: Nullable<string>;
+  profile_photo_url: string;
+  two_factor_enabled: boolean;
+  email_verified_at: Nullable<DateTime>;
+  created_at: DateTime;
+  updated_at: DateTime;
+}
+
 export interface Auth {
   user: Nullable<
     User & {

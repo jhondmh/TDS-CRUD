@@ -43,7 +43,9 @@ import {
 	Group,
 	Text,
 	Center,
+	keys,
 	Checkbox,
+	Avatar,
 	Select,
 	Button,
 } from '@mantine/core';
@@ -61,14 +63,23 @@ import TableSelectionClasses from '../../../css/TableSelection.module.css';
 import TableScrollAreaClasses from '../../../css/TableScrollArea.module.css';
 import ModalHeaderBodyClasses from '../../../css/ModalHeaderBody.module.css';
 
+import dataDepartamentos from '../../Datos/DataDepartamentos';
+import dataProvincias from '../../Datos/DataProvincias';
+
 interface RowData {
-	nombre: string;
-	apellido_pat: string;
-	apellido_mat: string;
+	name: string;
+	paternal: string;
+	maternal: string;
+	departamento: string;
+	provincia: string;
+	distrito: string;
+	current_address: string;
+	dni: string;
+	email: string;
+	password: string;
 	nota1: string;
 	nota2: string;
 	nota3: string;
-	departamento: string;
 }
 
 interface ThProps {
@@ -125,14 +136,35 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 //   );
 // }
 
-function filterData(data: RowData[], search: string) {
+// function filterData(data: RowData[], search: string) {
+// 	const query = search.toLowerCase().trim();
+// 	console.log('filterData - data:', data);
+// 	console.log('filterData - search:', search);
+// 	if (data.length === 0) {
+// 		return []; // Retorna un arreglo vacío si no hay datos
+// 	}
+// 	// return data.filter(item =>
+// 	// 	Object.keys(data[0]).some(key =>
+// 	// 		String(item[key]).toLowerCase().includes(query),
+// 	// 	),
+// 	// );
+// 	const filteredData = data.filter(item =>
+// 		Object.keys(data[0]).some(key =>
+// 			String(item[key]).toLowerCase().includes(query),
+// 		),
+// 	);
+
+// 	console.log('filterData - filteredData:', filteredData);
+// 	return filteredData;
+// }
+function filterData(data, search) {
 	const query = search.toLowerCase().trim();
 	if (data.length === 0) {
 		return []; // Retorna un arreglo vacío si no hay datos
 	}
 	return data.filter(item =>
-		Object.keys(data[0]).some(key =>
-			String(item[key]).toLowerCase().includes(query),
+		Object.keys(item.user).some(key =>
+			String(item.user[key]).toLowerCase().includes(query),
 		),
 	);
 }
@@ -163,6 +195,33 @@ function filterData(data: RowData[], search: string) {
 // 	);
 // }
 
+// function sortData(data, payload) {
+// 	const { sortBy, reversed, search } = payload;
+
+// 	if (!sortBy) {
+// 		return filterData(data, search);
+// 	}
+
+// 	return filterData(
+// 		[...data].sort((a, b) => {
+// 			console.log('Valor de a[sortBy]:', a[sortBy]);
+// 			console.log('Valor de b[sortBy]:', b[sortBy]);
+// 			// Comprueba si el valor es un número
+// 			if (!isNaN(a[sortBy]) && !isNaN(b[sortBy])) {
+// 				// Ordena como número
+// 				return reversed ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy];
+// 			} else {
+// 				// Ordena como cadena
+// 				if (reversed) {
+// 					return b[sortBy].localeCompare(a[sortBy]);
+// 				} else {
+// 					return a[sortBy].localeCompare(b[sortBy]);
+// 				}
+// 			}
+// 		}),
+// 		search,
+// 	);
+// }
 function sortData(data, payload) {
 	const { sortBy, reversed, search } = payload;
 
@@ -172,16 +231,29 @@ function sortData(data, payload) {
 
 	return filterData(
 		[...data].sort((a, b) => {
+			const aValue = a.user ? a.user[sortBy] : a[sortBy]; // Accede al valor anidado si existe
+			const bValue = b.user ? b.user[sortBy] : b[sortBy]; // Accede al valor anidado si existe
+
+			console.log('Valor de aValue:', aValue);
+			console.log('Valor de bValue:', bValue);
+
+			if (aValue === undefined || bValue === undefined) {
+				console.error(
+					`Error: No se encontró la clave '${sortBy}' en los datos.`,
+				);
+				return 0;
+			}
+
 			// Comprueba si el valor es un número
-			if (!isNaN(a[sortBy]) && !isNaN(b[sortBy])) {
+			if (!isNaN(aValue) && !isNaN(bValue)) {
 				// Ordena como número
-				return reversed ? b[sortBy] - a[sortBy] : a[sortBy] - b[sortBy];
+				return reversed ? bValue - aValue : aValue - bValue;
 			} else {
 				// Ordena como cadena
 				if (reversed) {
-					return b[sortBy].localeCompare(a[sortBy]);
+					return bValue.localeCompare(aValue);
 				} else {
-					return a[sortBy].localeCompare(b[sortBy]);
+					return aValue.localeCompare(bValue);
 				}
 			}
 		}),
@@ -193,6 +265,14 @@ export default function Dashboard(props) {
 	const route = useRoute();
 
 	const [estudiantes, setEstudiantes] = useState(props.estudiantes);
+
+	// const estudiantes = props.estudiantes; // Asumiendo que 'estudiantes' es pasado como prop
+
+	// estudiantes.forEach(estudiante => {
+	// 	console.log(estudiante.user.dni); // Accede al name del usuario relacionado
+	// 	console.log(estudiante.nota1); // Accede a la nota1 del estudiante
+	// 	// ... otros campos
+	// });
 
 	// const [modal, setModal] = useState(false);
 	const [title, setTitle] = useState('');
@@ -255,7 +335,7 @@ export default function Dashboard(props) {
 	// 	errors,
 	// } = useForm({
 	// 	id: '',
-	// 	nombre: '',
+	// 	name: '',
 	// 	apellido_pat: '',
 	// 	apellido_mat: '',
 	// 	fecha_nac: '',
@@ -266,25 +346,32 @@ export default function Dashboard(props) {
 	const form = useForm({
 		initialValues: {
 			id: '',
-			nombre: '',
-			apellido_pat: '',
-			apellido_mat: '',
+			// user_id: '',
+			name: '',
+			paternal: '',
+			maternal: '',
 			fecha_nac: null, // Puede que necesites ajustar esto según tu DatePicker
+			departamento: '',
+			provincia: '',
+			distrito: '',
+			current_address: '',
+			dni: '',
+			email: '',
+			password: '',
 			nota1: '',
 			nota2: '',
 			nota3: '',
-			departamento: '',
 		},
 
 		validate: {
-			nombre: value => {
-				if (!value) return 'El nombre es requerido';
+			name: value => {
+				if (!value) return 'El name es requerido';
 				if (value.length > 25)
 					return 'El Nombre muy largo (máx. 25 caracteres)';
 				if (/\d/.test(value)) return 'Nombre no debe contener números';
 				return null;
 			},
-			apellido_pat: value => {
+			paternal: value => {
 				if (!value) return 'El Apellido Paterno requerido';
 				if (value.length > 25)
 					return 'Apellido Paterno muy largo (máx. 25 caracteres)';
@@ -292,7 +379,7 @@ export default function Dashboard(props) {
 					return 'El Apellido Paterno no debe contener números';
 				return null;
 			},
-			apellido_mat: value => {
+			maternal: value => {
 				if (!value) return 'El Apellido Materno requerido';
 				if (value.length > 25)
 					return 'Apellido Materno muy largo (máx. 25 caracteres)';
@@ -306,6 +393,60 @@ export default function Dashboard(props) {
 				const now = new Date();
 				if (date > now)
 					return 'La Fecha de nacimiento no puede ser en el futuro';
+				return null;
+			},
+			departamento: value => {
+				if (!value) return 'El Departamento es requerido';
+				if (value.length > 30)
+					return 'Departamento muy largo (máx. 30 caracteres)';
+				if (/\d/.test(value))
+					return 'El Departamento no debe contener números';
+				return null;
+			},
+			provincia: value => {
+				if (!value) return 'La Provincia es requerida';
+				if (value.length > 30)
+					return 'Provincia muy largo (máx. 30 caracteres)';
+				if (/\d/.test(value))
+					return 'El Provincia no debe contener números';
+				return null;
+			},
+			distrito: value => {
+				if (!value) return 'El Distrito es requerido';
+				if (value.length > 30)
+					return 'Distrito muy largo (máx. 30 caracteres)';
+				if (/\d/.test(value))
+					return 'El Distrito no debe contener números';
+				return null;
+			},
+
+			current_address: value => {
+				if (!value) return 'La dirección es requerida';
+				if (value.length > 70)
+					return 'El Nombre muy largo (máx. 70 caracteres)';
+				if (/\d/.test(value)) return 'Nombre no debe contener números';
+				return null;
+			},
+			dni: value => {
+				if (!value) return 'El DNI es requerido';
+				if (!/^[0-9]{8}$/.test(value))
+					return 'El DNI debe tener 8 dígitos numéricos';
+				return null;
+			},
+			email: value => {
+				if (!value) return 'El correo electrónico es requerido';
+				if (!/\S+@\S+\.\S+/.test(value))
+					return 'El correo electrónico no es válido';
+				if (value.length > 40)
+					return 'El correo electrónico es muy largo (máx. 40 caracteres)';
+				return null;
+			},
+			password: value => {
+				if (!value) return 'La contraseña es requerida';
+				if (value.length < 8)
+					return 'La contraseña es muy corta (mín. 8 caracteres)';
+				if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value))
+					return 'La contraseña debe contener letras y números';
 				return null;
 			},
 			nota1: value => {
@@ -340,14 +481,6 @@ export default function Dashboard(props) {
 				if (nota > 20) return 'Nota 3debe estar entre 0 y 20';
 				return null;
 			},
-			departamento: value => {
-				if (!value) return 'El Departamento es requerido';
-				if (value.length > 25)
-					return 'Departamento muy largo (máx. 25 caracteres)';
-				if (/\d/.test(value))
-					return 'El Departamento no debe contener números';
-				return null;
-			},
 		},
 	});
 
@@ -370,28 +503,47 @@ export default function Dashboard(props) {
 	const openModal = (
 		op,
 		id,
-		nombre,
-		apellido_pat,
-		apellido_mat,
+		// user_id,
+		name,
+		paternal,
+		maternal,
 		fecha_nac,
+		departamento,
+		provincia,
+		distrito,
+		current_address,
+		dni,
+		email,
+		password,
 		nota1,
 		nota2,
 		nota3,
-		departamento,
 	) => {
 		// setModal(true),
+
+		setDepartamento(departamento);
+		setProvincia(provincia);
+		setDistrito(distrito);
 		open();
 		setOperation(op);
+		// console.log(user_id);
 		form.setValues({
 			id: op === 2 ? id : '',
-			nombre: nombre,
-			apellido_pat: apellido_pat,
-			apellido_mat: apellido_mat,
+			// user_id: user_id,
+			name: name,
+			paternal: paternal,
+			maternal: maternal,
 			fecha_nac: fecha_nac,
+			departamento: departamento,
+			provincia: provincia,
+			distrito: distrito,
+			current_address: current_address,
+			dni: dni,
+			email: email,
+			password: password,
 			nota1: formatGrade(nota1),
 			nota2: formatGrade(nota2),
 			nota3: formatGrade(nota3),
-			departamento: departamento,
 		});
 
 		if (op === 1) {
@@ -428,8 +580,8 @@ export default function Dashboard(props) {
 	// 				ok('Estudiante añadido con éxito');
 	// 			},
 	// 			onError: () => {
-	// 				if (errors.nombre) {
-	// 					reset('nombre');
+	// 				if (errors.name) {
+	// 					reset('name');
 	// 					NombreInput.current.focus();
 	// 				}
 	// 				if (errors.apellido_pat) {
@@ -485,8 +637,8 @@ export default function Dashboard(props) {
 	// 				ok('Estudiante actualizado con éxito');
 	// 			},
 	// 			onError: () => {
-	// 				if (errors.nombre) {
-	// 					reset('nombre');
+	// 				if (errors.name) {
+	// 					reset('name');
 	// 					NombreInput.current.focus();
 	// 				}
 	// 				if (errors.apellido_pat) {
@@ -517,16 +669,26 @@ export default function Dashboard(props) {
 		setIsSubmitting(true);
 		try {
 			let response;
+
 			const estudianteData = {
-				nombre: values.nombre,
-				apellido_pat: values.apellido_pat,
-				apellido_mat: values.apellido_mat,
+				// user_id: values.user_id,
+				name: values.name,
+				paternal: values.paternal,
+				maternal: values.maternal,
 				fecha_nac: values.fecha_nac,
+				departamento: values.departamento,
+				provincia: values.provincia,
+				distrito: values.distrito,
+				current_address: values.current_address,
+				dni: values.dni,
+				email: values.email,
+				password: values.password,
 				nota1: parseInt(values.nota1, 10), // Asegúrate de enviar un entero
 				nota2: parseInt(values.nota2, 10), // Asegúrate de enviar un entero
 				nota3: parseInt(values.nota3, 10), // Asegúrate de enviar un entero
-				departamento: values.departamento,
 			};
+
+			console.log(estudianteData);
 
 			if (operation === 1) {
 				// Añadir un nuevo estudiante
@@ -541,23 +703,44 @@ export default function Dashboard(props) {
 					`/estudiantes/${values.id}`,
 					estudianteData,
 				);
-				const estudianteActualizado = response.data.estudiante;
-				setEstudiantes(estudiantesActuales =>
-					estudiantesActuales.map(est =>
-						est.id === estudianteActualizado.id
-							? estudianteActualizado
-							: est,
-					),
+				console.log(
+					'Respuesta del servidor (Actualizar):',
+					response.data,
 				);
+
+				const estudianteActualizado = response.data.estudiante;
+				setEstudiantes(estudiantesActuales => {
+					console.log(
+						'Estudiantes antes de actualizar (Actualizar):',
+						estudiantesActuales,
+					);
+					const estudiantesActualizados = estudiantesActuales.map(
+						est =>
+							est.id === estudianteActualizado.id
+								? estudianteActualizado
+								: est,
+					);
+					console.log(
+						'Estudiantes actualizados (Actualizar):',
+						estudiantesActualizados,
+					);
+					return estudiantesActualizados;
+				});
 			}
 
-			setSortedData(actualSortedData =>
-				actualSortedData.map(est =>
+			setSortedData(actualSortedData => {
+				console.log(
+					'SortedData antes de actualizar:',
+					actualSortedData,
+				);
+				const newData = actualSortedData.map(est =>
 					est.id === response.data.estudiante.id
 						? response.data.estudiante
 						: est,
-				),
-			);
+				);
+				console.log('SortedData actualizados:', newData);
+				return newData;
+			});
 			ok(
 				'Estudiante ' +
 					(operation === 1 ? 'añadido' : 'actualizado') +
@@ -577,12 +760,12 @@ export default function Dashboard(props) {
 		closeModal();
 		Swal.fire({ title: mensaje, icon: 'success' });
 	};
-	// const eliminar = (id, nombre) => {
+	// const eliminar = (id, name) => {
 	// 	const alerta = Swal.mixin({ buttonsStyling: true });
 	// 	alerta
 	// 		.fire({
 	// 			title:
-	// 				'¿Estás seguro de eliminar el estudiante ' + nombre + '?',
+	// 				'¿Estás seguro de eliminar el estudiante ' + name + '?',
 	// 			text: 'Esta operación es irreversible',
 	// 			icon: 'question',
 	// 			showCancelButton: true,
@@ -617,11 +800,11 @@ export default function Dashboard(props) {
 	// 		});
 	// };
 
-	const eliminar = (id, nombre) => {
+	const eliminar = (id, name) => {
 		const alerta = Swal.mixin({ buttonsStyling: true });
 		alerta
 			.fire({
-				title: `¿Estás seguro de eliminar el estudiante ${nombre}?`,
+				title: `¿Estás seguro de eliminar el estudiante ${name}?`,
 				text: 'Esta operación es irreversible',
 				icon: 'question',
 				showCancelButton: true,
@@ -692,6 +875,10 @@ export default function Dashboard(props) {
 
 	const setSorting = (field: keyof RowData) => {
 		const reversed = field === sortBy ? !reverseSortDirection : false;
+		console.log('Datos antes de ordenar:', estudiantes);
+		console.log('Clave de ordenamiento (sortBy):', field);
+		console.log('Orden invertido (reverseSortDirection):', reversed);
+
 		setReverseSortDirection(reversed);
 		setSortBy(field);
 		setSortedData(
@@ -712,6 +899,7 @@ export default function Dashboard(props) {
 	};
 
 	const idsToSend = selection.map(id => parseInt(id, 10));
+	// console.log(idsToSend);
 
 	// useEffect(() => {
 	// 	setSortedData(
@@ -763,8 +951,10 @@ export default function Dashboard(props) {
 								estudiante =>
 									!idsToSend.includes(estudiante.id),
 							);
+							console.log(updatedData);
 							setEstudiantes(updatedData);
 							setSortedData(updatedData);
+							console.log(selection);
 							setSelection([]);
 						})
 						.catch(error => {
@@ -852,7 +1042,8 @@ export default function Dashboard(props) {
 	}
 
 	const rows = sortedData.map((estudiante, i) => {
-		const selected = selection.includes(estudiante.id);
+		const selected = selection.includes(estudiante.user.id);
+		console.log(selected);
 		return (
 			<Table.Tr
 				key={estudiante.id}
@@ -868,18 +1059,25 @@ export default function Dashboard(props) {
 				</Table.Td>
 				<Table.Td>{i + 1}</Table.Td>
 				<Table.Td style={{ whiteSpace: 'nowrap' }}>
-					{capitalizeWords(estudiante.nombre)}
+					{capitalizeWords(estudiante.user.name)}
 				</Table.Td>
-				<Table.Td>{capitalizeWords(estudiante.apellido_pat)}</Table.Td>
-				<Table.Td>{capitalizeWords(estudiante.apellido_mat)}</Table.Td>
+				<Table.Td>{capitalizeWords(estudiante.user.paternal)}</Table.Td>
+				<Table.Td>{capitalizeWords(estudiante.user.maternal)}</Table.Td>
 				<Table.Td>
-					{dayjs(estudiante.fecha_nac).format('MMMM D, YYYY')}
+					{dayjs(estudiante.user.fecha_nac).format('MMMM D, YYYY')}
 				</Table.Td>
+
+				<Table.Td>{estudiante.user.departamento}</Table.Td>
+				<Table.Td>{estudiante.user.provincia}</Table.Td>
+				<Table.Td>{estudiante.user.distrito}</Table.Td>
+
+				<Table.Td>{estudiante.user.current_address}</Table.Td>
+				<Table.Td>{estudiante.user.dni}</Table.Td>
+				<Table.Td>{estudiante.user.email}</Table.Td>
 
 				<Table.Td>{formatGrade(estudiante.nota1)}</Table.Td>
 				<Table.Td>{formatGrade(estudiante.nota2)}</Table.Td>
 				<Table.Td>{formatGrade(estudiante.nota3)}</Table.Td>
-				<Table.Td>{estudiante.departamento}</Table.Td>
 
 				<Table.Td>
 					<div className="flex justify-center items-center w-full h-full">
@@ -887,15 +1085,24 @@ export default function Dashboard(props) {
 							onClick={() =>
 								openModal(
 									2,
+
 									estudiante.id,
-									estudiante.nombre,
-									estudiante.apellido_pat,
-									estudiante.apellido_mat,
-									estudiante.fecha_nac,
+									// estudiante.user.id,
+									// estudiante.user.user_id,
+									estudiante.user.name,
+									estudiante.user.paternal,
+									estudiante.user.maternal,
+									estudiante.user.fecha_nac,
+									estudiante.user.departamento,
+									estudiante.user.provincia,
+									estudiante.user.distrito,
+									estudiante.user.current_address,
+									estudiante.user.dni,
+									estudiante.user.email,
+									estudiante.user.password,
 									estudiante.nota1,
 									estudiante.nota2,
 									estudiante.nota3,
-									estudiante.departamento,
 								)
 							}
 						>
@@ -908,7 +1115,7 @@ export default function Dashboard(props) {
 					<div className="flex justify-center items-center w-full h-full">
 						<DangerButton
 							onClick={() =>
-								eliminar(estudiante.id, estudiante.nombre)
+								eliminar(estudiante.id, estudiante.name)
 							}
 						>
 							<i className="fa-solid fa-trash"></i>
@@ -919,7 +1126,84 @@ export default function Dashboard(props) {
 		);
 	});
 
+	// Lugares
+	const [departamento, setDepartamento] = useState(
+		estudiantes.departamento || '',
+	);
+	const [provincia, setProvincia] = useState(estudiantes.provincia || '');
+	const [distrito, setDistrito] = useState(estudiantes.distrito || '');
+
+	// // Efecto para inicializar estados al montar el componente
+	React.useEffect(() => {
+		setDepartamento(estudiantes.departamento || '');
+		setProvincia(estudiantes.provincia || '');
+		setDistrito(estudiantes.distrito || '');
+	}, []);
+	// Efecto para inicializar estados al montar el componente
+	// useEffect(() => {
+	// 	setDepartamento(user.departamento || '');
+	// 	setProvincia(user.provincia || '');
+	// 	setDistrito(user.distrito || '');
+	// 	setDateValue(initialDate); // Inicializa dateValue cuando el componente se monta
+	// }, [user]);
+
+	const handleDepartamentoChange = (value: string) => {
+		const newValue = value || ''; // Proporciona un valor predeterminado
+		setDepartamento(newValue);
+		setDepartamento(value);
+		setProvincia('');
+		setDistrito('');
+		// form.setData({
+		// 	...form.data, // Incluye todas las propiedades actuales
+		// 	departamento: value,
+		// 	provincia: '',
+		// 	distrito: '',
+		// });
+
+		form.setValues(currentValues => ({
+			...currentValues, // Incluye todas las propiedades actuales
+			departamento: value,
+			provincia: '',
+			distrito: '',
+		}));
+	};
+
+	const handleProvinciaChange = (value: string) => {
+		setProvincia(value);
+		setDistrito('');
+		// form.setData({
+		// 	...form.data, // Incluye todas las propiedades actuales
+		// 	provincia: value,
+		// 	distrito: '',
+		// });
+		form.setValues(currentValues => ({
+			...currentValues, // Incluye todas las propiedades actuales
+			provincia: value,
+			distrito: '',
+		}));
+	};
+
+	const handleDistritoChange = (value: string) => {
+		setDistrito(value);
+		// form.setData({
+		// 	...form.data, // Incluye todas las propiedades actuales
+		// 	distrito: value,
+		// });
+		form.setValues(currentValues => ({
+			...currentValues, // Incluye todas las propiedades actuales
+			distrito: value,
+		}));
+	};
+
+	// Obtiene las provincias para el departamento seleccionado
+	const provincias = departamento
+		? dataDepartamentos[departamento] || []
+		: [];
+
+	// Obtiene los distritos para la provincia seleccionada
+	const distritos = provincia ? dataProvincias[provincia] || [] : [];
 	function capitalizeWords(str: string): string {
+		if (!str) return ''; // Retorna una cadena vacía si str es undefined o null
 		return str.toLowerCase().replace(/(?:^|\s)\S/g, a => {
 			return a.toUpperCase();
 		});
@@ -1018,23 +1302,23 @@ export default function Dashboard(props) {
 								</Table.Th>
 								<Table.Th className="px-2 py-2">#</Table.Th>
 								<Th
-									sorted={sortBy === 'nombre'}
+									sorted={sortBy === 'name'}
 									reversed={reverseSortDirection}
-									onSort={() => setSorting('nombre')}
+									onSort={() => setSorting('name')}
 								>
 									Nombres
 								</Th>
 								<Th
-									sorted={sortBy === 'apellido_pat'}
+									sorted={sortBy === 'paternal'}
 									reversed={reverseSortDirection}
-									onSort={() => setSorting('apellido_pat')}
+									onSort={() => setSorting('paternal')}
 								>
 									Apellido Paterno
 								</Th>
 								<Th
-									sorted={sortBy === 'apellido_mat'}
+									sorted={sortBy === 'maternal'}
 									reversed={reverseSortDirection}
-									onSort={() => setSorting('apellido_mat')}
+									onSort={() => setSorting('maternal')}
 								>
 									Apellido Materno
 								</Th>
@@ -1050,6 +1334,50 @@ export default function Dashboard(props) {
 									Nota 1
 								</Table.Th> */}
 
+								<Th
+									sorted={sortBy === 'departamento'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('departamento')}
+								>
+									Departamento
+								</Th>
+
+								<Th
+									sorted={sortBy === 'provincia'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('provincia')}
+								>
+									Provincia
+								</Th>
+								<Th
+									sorted={sortBy === 'distrito'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('distrito')}
+								>
+									Distrito
+								</Th>
+
+								<Th
+									sorted={sortBy === 'current_address'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('current_address')}
+								>
+									Dirección actual
+								</Th>
+								<Th
+									sorted={sortBy === 'dni'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('dni')}
+								>
+									DNI
+								</Th>
+								<Th
+									sorted={sortBy === 'email'}
+									reversed={reverseSortDirection}
+									onSort={() => setSorting('email')}
+								>
+									Email
+								</Th>
 								<Th
 									sorted={sortBy === 'nota1'}
 									reversed={reverseSortDirection}
@@ -1072,14 +1400,6 @@ export default function Dashboard(props) {
 									onSort={() => setSorting('nota3')}
 								>
 									Nota 3
-								</Th>
-
-								<Th
-									sorted={sortBy === 'departamento'}
-									reversed={reverseSortDirection}
-									onSort={() => setSorting('departamento')}
-								>
-									Departamento
 								</Th>
 
 								<Table.Th className="px-2 py-2">
@@ -1137,7 +1457,7 @@ export default function Dashboard(props) {
 										}
 									>
 										<Text fw={500} ta="center">
-											Nothing found
+											Sin resultados
 										</Text>
 									</Table.Td>
 								</Table.Tr>
@@ -1174,45 +1494,44 @@ export default function Dashboard(props) {
 						noValidate
 					>
 						<div className="mt-6">
-							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+							{/* <InputLabel for="name" value="Nombres"></InputLabel> */}
 							<TextInput
-								id="nombre"
-								name="nombre"
+								id="name"
+								name="name"
 								label="Nombres"
-								{...form.getInputProps('nombre')}
+								{...form.getInputProps('name')}
 								placeholder="Nombres"
 								// ref={NombreInput}
 								required
-								value={form.values.nombre || ''}
+								value={form.values.name || ''}
 								onChange={e =>
-									form.setFieldValue('nombre', e.target.value.toUpperCase())
+									form.setFieldValue(
+										'name',
+										e.target.value.toUpperCase(),
+									)
 								}
 								spellCheck={false}
 								// className="mt-1 block w-full"
 								data-autofocus
 							/>
-							{/* <InputError
-							message={errors.nombre}
-							className="mt-2"
-						></InputError> */}
 						</div>
 						<div className="mt-6">
 							{/* <InputLabel
-							for="apellido_pat"
+							for="paternal"
 							value="Apellido Paterno"
 						></InputLabel> */}
 							<TextInput
-								id="apellido_pat"
-								name="apellido_pat"
+								id="paternal"
+								name="paternal"
 								label="Apellido Paterno"
-								{...form.getInputProps('apellido_pat')}
+								{...form.getInputProps('paternal')}
 								placeholder="Apellido Paterno"
 								// ref={Apellido_Pat_Input}
-								value={form.values.apellido_pat || ''}
+								value={form.values.paternal || ''}
 								required
 								onChange={e =>
 									form.setFieldValue(
-										'apellido_pat',
+										'paternal',
 										e.target.value.toUpperCase(),
 									)
 								}
@@ -1221,46 +1540,27 @@ export default function Dashboard(props) {
 							/>
 
 							{/* <InputError
-							message={errors.apellido_pat}
+							message={errors.paternal}
 							className="mt-2"
 						></InputError> */}
 						</div>
 						<div className="mt-6">
 							{/* <InputLabel
-							for="apellido_mat"
+							for="maternal"
 							value="Apellido Materno"
 						></InputLabel> */}
-							{/* <TextInput
-								id="apellido_mat"
-								name="apellido_mat"
+							<TextInput
+								id="maternal"
+								name="maternal"
 								label="Apellido Materno"
-								{...form.getInputProps('apellido_mat')}
+								{...form.getInputProps('maternal')}
 								placeholder="Apellido Materno"
 								// ref={Apellido_Mat_Input}
-								value={form.values.apellido_mat || ''}
+								value={form.values.maternal || ''}
 								required
 								onChange={e =>
 									form.setFieldValue(
-										'apellido_mat',
-										e.target.value.toUpperCase,
-									)
-								}
-								spellCheck={false}
-								// className="mt-1 block w-full"
-							/> */}
-
-							<TextInput
-								id="apellido_mat"
-								name="apellido_mat"
-								label="Apellido Materno"
-								{...form.getInputProps('apellido_mat')}
-								placeholder="Apellido Materno"
-								// ref={Apellido_Pat_Input}
-								value={form.values.apellido_mat || ''}
-								required
-								onChange={e =>
-									form.setFieldValue(
-										'apellido_mat',
+										'maternal',
 										e.target.value.toUpperCase(),
 									)
 								}
@@ -1269,7 +1569,7 @@ export default function Dashboard(props) {
 							/>
 
 							{/* <InputError
-							message={errors.apellido_mat}
+							message={errors.maternal}
 							className="mt-2"
 						></InputError> */}
 						</div>
@@ -1324,10 +1624,233 @@ export default function Dashboard(props) {
 							className="mt-2"
 						></InputError> */}
 						</div>
+
+						<div className="mt-6">
+							<Select
+								key={`departamento-${departamento}`}
+								id="departamento"
+								name="departamento"
+								label="Departamento"
+								{...form.getInputProps('departamento')}
+								placeholder="Departamento"
+								// data={['Puno', 'Arequipa', 'Lima']}
+
+								data={Object.keys(dataDepartamentos)}
+								// ref={DepartamentoInput}
+								required
+								// value={form.values.departamento || ''}
+
+								value={departamento || ''}
+								// onChange={e =>
+								// 	setData('departamento', e.target.value)
+								// }
+								// onChange={value =>
+								// 	form.setFieldValue('departamento', value)
+								// }
+
+								onChange={(value: string) =>
+									handleDepartamentoChange(value)
+								}
+								searchable
+								nothingFoundMessage="No se ha encontrado nada..."
+								clearable
+								comboboxProps={{
+									dropdownPadding: 13,
+									transitionProps: {
+										transition: 'pop',
+										duration: 200,
+									},
+								}}
+							/>
+						</div>
+
+						<div className="mt-6">
+							<Select
+								key={`provincia-${provincia}`}
+								id="provincia"
+								name="provincia"
+								label="Provincia"
+								{...form.getInputProps('provincia')}
+								placeholder="Provincia"
+								// data={['Puno', 'Arequipa', 'Lima']}
+
+								data={provincias}
+								// ref={DepartamentoInput}
+								required
+								// value={form.values.provincia || ''}
+
+								value={provincia || ''}
+								// onChange={e =>
+								// 	setData('provincia', e.target.value)
+								// }
+								// onChange={value =>
+								// 	form.setFieldValue('provincia', value)
+								// }
+
+								onChange={(value: string) =>
+									handleProvinciaChange(value)
+								}
+								searchable
+								nothingFoundMessage="No se ha encontrado nada..."
+								clearable
+								comboboxProps={{
+									dropdownPadding: 13,
+									transitionProps: {
+										transition: 'pop',
+										duration: 200,
+									},
+								}}
+							/>
+						</div>
+						<div className="mt-6">
+							<Select
+								key={`distrito-${distrito}`}
+								id="distrito"
+								name="distrito"
+								label="Distrito"
+								{...form.getInputProps('distrito')}
+								placeholder="Distrito"
+								// data={['Puno', 'Arequipa', 'Lima']}
+
+								data={distritos}
+								// ref={DepartamentoInput}
+								required
+								// value={form.values.distrito || ''}
+
+								value={distrito || ''}
+								// onChange={e =>
+								// 	setData('distrito', e.target.value)
+								// }
+								// onChange={value =>
+								// 	form.setFieldValue('distrito', value)
+								// }
+								onChange={(value: string) =>
+									handleDistritoChange(value)
+								}
+								searchable
+								nothingFoundMessage="No se ha encontrado nada..."
+								clearable
+								comboboxProps={{
+									dropdownPadding: 13,
+									transitionProps: {
+										transition: 'pop',
+										duration: 200,
+									},
+								}}
+							/>
+						</div>
+
+						<div className="mt-6">
+							{/* <InputLabel for="name" value="Nombres"></InputLabel> */}
+							<TextInput
+								id="current_address"
+								name="current_address"
+								label="Dirección actual"
+								{...form.getInputProps('current_address')}
+								placeholder="Dirección actual"
+								// ref={NombreInput}
+								required
+								value={form.values.current_address || ''}
+								onChange={e =>
+									form.setFieldValue(
+										'current_address',
+										e.target.value,
+									)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+						</div>
+
+						<div className="mt-6">
+							{/* <InputLabel
+							for="paternal"
+							value="Apellido Paterno"
+						></InputLabel> */}
+							<TextInput
+								id="dni"
+								name="dni"
+								label="DNI"
+								{...form.getInputProps('dni')}
+								placeholder="DNI"
+								// ref={Apellido_Pat_Input}
+								value={form.values.dni || ''}
+								required
+								onChange={e =>
+									form.setFieldValue('dni', e.target.value)
+								}
+								maxLength={8}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+
+							{/* <InputError
+							message={errors.paternal}
+							className="mt-2"
+						></InputError> */}
+						</div>
+
+						<div className="mt-6">
+							{/* <InputLabel
+							for="paternal"
+							value="Apellido Paterno"
+						></InputLabel> */}
+							<TextInput
+								id="email"
+								name="email"
+								label="Email"
+								{...form.getInputProps('email')}
+								placeholder="Email"
+								// ref={Apellido_Pat_Input}
+								value={form.values.email || ''}
+								required
+								onChange={e =>
+									form.setFieldValue('email', e.target.value)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+							/>
+
+							{/* <InputError
+							message={errors.paternal}
+							className="mt-2"
+						></InputError> */}
+						</div>
+
+						<div className="mt-6 mb-2">
+							{/* <InputLabel
+							for="paternal"
+							value="Apellido Paterno"
+						></InputLabel> */}
+							<TextInput
+								id="password"
+								name="password"
+								label="Contraseña"
+								{...form.getInputProps('password')}
+								placeholder="Contraseña"
+								// ref={Apellido_Pat_Input}
+								value={form.values.password || ''}
+								required
+								onChange={e =>
+									form.setFieldValue(
+										'password',
+										e.target.value,
+									)
+								}
+								spellCheck={false}
+								// className="mt-1 block w-full"
+								type="password"
+							/>
+
+							{/* <InputError
+							message={errors.paternal}
+							className="mt-2"
+						></InputError> */}
+						</div>
 						<div>
 							<Flex justify="flex-end">
 								<div className="mt-6 mr-5">
-									{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+									{/* <InputLabel for="name" value="Nombres"></InputLabel> */}
 									<TextInput
 										id="nota1"
 										name="nota1"
@@ -1354,7 +1877,7 @@ export default function Dashboard(props) {
 								</div>
 
 								<div className="mt-6 mr-5">
-									{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+									{/* <InputLabel for="name" value="Nombres"></InputLabel> */}
 									<TextInput
 										id="nota2"
 										name="nota2"
@@ -1381,7 +1904,7 @@ export default function Dashboard(props) {
 								</div>
 
 								<div className="mt-6">
-									{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
+									{/* <InputLabel for="name" value="Nombres"></InputLabel> */}
 									<TextInput
 										id="nota3"
 										name="nota3"
@@ -1407,47 +1930,6 @@ export default function Dashboard(props) {
 									/>
 								</div>
 							</Flex>
-						</div>
-
-						<div className="mt-6">
-							{/* <InputLabel for="nombre" value="Nombres"></InputLabel> */}
-							{/* <TextInput
-							id="departamento"
-							name="departamento"
-							label="Departamento"
-							placeholder="Departamento"
-							ref={DepartamentoInput}
-							required
-							value={data.departamento || ''}
-							onChange={e =>
-								setData('departamento', e.target.value)
-							}
-							spellCheck={false}
-							// className="mt-1 block w-full"
-							data-autofocus
-						/> */}
-
-							<Select
-								id="departamento"
-								name="departamento"
-								label="Departamento"
-								{...form.getInputProps('departamento')}
-								placeholder="Departamento"
-								data={['Puno', 'Arequipa', 'Lima']}
-								// ref={DepartamentoInput}
-								required
-								value={form.values.departamento || ''}
-								// onChange={e =>
-								// 	setData('departamento', e.target.value)
-								// }
-								onChange={value =>
-									form.setFieldValue('departamento', value)
-								}
-							/>
-
-							{/* <InputError message={errors.departamento}
-							className="mt-2"
-						></InputError> */}
 						</div>
 					</form>
 				</ScrollArea>

@@ -26,7 +26,7 @@ type CanProps = {
 const Can = ({ perform, children }: CanProps) => {
 	// Obtener los permisos del estado de Redux
 	const permissions = useSelector(selectPermissions);
-	console.log('permissions de can.tsx', permissions);
+	// console.log('permissions de can.tsx', permissions);
 
 	// Renderizar los hijos solo si el usuario tiene el permiso requerido
 	return permissions.includes(perform) ? <>{children}</> : null;
