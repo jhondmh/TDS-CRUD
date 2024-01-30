@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\DB;
 class EstudiantesController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('can:estudiantes.index')->only('index');
+        $this->middleware('can:estudiantes.store')->only('store');
+        $this->middleware('can:estudiantes.update')->only('update');
+        $this->middleware('can:estudiantes.Destroy')->only('Destroy');
+        $this->middleware('can:estudiantes.multipleDestroy')->only('multipleDestroy');
+    }
     public function index()
     {
         // $estudiantes = Estudiantes::all();

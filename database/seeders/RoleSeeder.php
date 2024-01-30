@@ -20,15 +20,18 @@ class RoleSeeder extends Seeder
         $admin = Role::create(['name' => 'admin']);
         $manager = Role::create(['name' => 'manager']);
         $student = Role::create(['name' => 'student']);
+        $teacher = Role::create(['name' => 'teacher']);
 
-        Permission::create(['name' => 'dashboard'])->syncRoles([$admin, $manager, $student]);
-        Permission::create(['name' => 'user.index'])->syncRoles($admin);
-        Permission::create(['name' => 'user.store'])->syncRoles([$admin, $manager]);
+        Permission::create(['name' => 'dashboard'])->syncRoles([$admin, $manager, $student, $teacher]);
+        Permission::create(['name' => 'user.index'])->syncRoles([$admin, $manager]);
+        Permission::create(['name' => 'user.store'])->syncRoles($admin);
         Permission::create(['name' => 'user.update'])->syncRoles([$admin, $manager]);
-        Permission::create(['name' => 'user.destroy'])->syncRoles([$admin, $manager]);
-        Permission::create(['name' => 'estudiantes.index'])->syncRoles([$admin, $manager, $student]);
-        Permission::create(['name' => 'estudiantes.store'])->syncRoles([$admin, $manager, $student]);
-        Permission::create(['name' => 'estudiantes.update'])->syncRoles([$admin, $manager, $student]);
-        Permission::create(['name' => 'estudiantes.destroy'])->syncRoles([$admin, $manager, $student]);
+        Permission::create(['name' => 'user.destroy'])->syncRoles($admin);
+        Permission::create(['name' => 'user.multipleDestroy'])->syncRoles($admin);
+        Permission::create(['name' => 'estudiantes.index'])->syncRoles([$admin, $manager, $teacher, $student]);
+        Permission::create(['name' => 'estudiantes.store'])->syncRoles([$admin, $manager]);
+        Permission::create(['name' => 'estudiantes.update'])->syncRoles([$admin, $manager, $teacher]);
+        Permission::create(['name' => 'estudiantes.destroy'])->syncRoles([$admin, $manager]);
+        Permission::create(['name' => 'estudiantes.multipleDestroy'])->syncRoles([$admin, $manager]);
     }
 }

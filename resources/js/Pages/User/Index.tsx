@@ -689,12 +689,14 @@ export default function Dashboard({ users }: Props) {
 					[TableSelectionClasses.rowSelected]: selected,
 				})}
 			>
-				<Table.Td>
-					<Checkbox
-						checked={selection.includes(estudiante.id)}
-						onChange={() => toggleRow(estudiante.id)}
-					/>
-				</Table.Td>
+				<Can perform="user.multipleDestroy">
+					<Table.Td>
+						<Checkbox
+							checked={selection.includes(estudiante.id)}
+							onChange={() => toggleRow(estudiante.id)}
+						/>
+					</Table.Td>
+				</Can>
 				<Table.Td>{i + 1}</Table.Td>
 				<Table.Td style={{ whiteSpace: 'nowrap' }}>
 					{capitalizeWords(estudiante.name)}
@@ -740,17 +742,19 @@ export default function Dashboard({ users }: Props) {
 					</div>
 				</Table.Td>
 
-				<Table.Td>
-					<div className="flex justify-center items-center w-full h-full">
-						<DangerButton
-							onClick={() =>
-								eliminar(estudiante.id, estudiante.name)
-							}
-						>
-							<i className="fa-solid fa-trash"></i>
-						</DangerButton>
-					</div>
-				</Table.Td>
+				<Can perform="user.destroy">
+					<Table.Td>
+						<div className="flex justify-center items-center w-full h-full">
+							<DangerButton
+								onClick={() =>
+									eliminar(estudiante.id, estudiante.name)
+								}
+							>
+								<i className="fa-solid fa-trash"></i>
+							</DangerButton>
+						</div>
+					</Table.Td>
+				</Can>
 			</Table.Tr>
 		);
 	});
@@ -847,14 +851,18 @@ export default function Dashboard({ users }: Props) {
 		>
 			<div className="bg-dark grid v-screen place-items-center pt-6">
 				<div className="mt-3 mb-3 flex justify-end space-x-4">
-					<PrimaryButton onClick={() => openModal(1)}>
-						<i className="fa-solid fa-circle-plus mr-2"></i>
-						Añadir
-					</PrimaryButton>
+					<Can perform="user.store">
+						<PrimaryButton onClick={() => openModal(1)}>
+							<i className="fa-solid fa-circle-plus mr-2"></i>
+							Añadir
+						</PrimaryButton>
+					</Can>
 
-					<PrimaryButton onClick={eliminarMultiples}>
-						Eliminar seleccionados
-					</PrimaryButton>
+					<Can perform="user.multipleDestroy">
+						<PrimaryButton onClick={eliminarMultiples}>
+							Eliminar seleccionados
+						</PrimaryButton>
+					</Can>
 				</div>
 
 				<div className="mt-6 w-2/4">
@@ -899,24 +907,26 @@ export default function Dashboard({ users }: Props) {
 							})}
 						>
 							<Table.Tr>
-								<Table.Th
-									style={{
-										width: rem(40),
-									}}
-								>
-									<Checkbox
-										onChange={toggleAll}
-										checked={
-											selection.length ===
-											estudiantes.length
-										}
-										indeterminate={
-											selection.length > 0 &&
-											selection.length !==
+								<Can perform="user.multipleDestroy">
+									<Table.Th
+										style={{
+											width: rem(40),
+										}}
+									>
+										<Checkbox
+											onChange={toggleAll}
+											checked={
+												selection.length ===
 												estudiantes.length
-										}
-									/>
-								</Table.Th>
+											}
+											indeterminate={
+												selection.length > 0 &&
+												selection.length !==
+													estudiantes.length
+											}
+										/>
+									</Table.Th>
+								</Can>
 								<Table.Th className="px-2 py-2">#</Table.Th>
 								<Th
 									sorted={sortBy === 'name'}
@@ -998,9 +1008,12 @@ export default function Dashboard({ users }: Props) {
 								<Table.Th className="px-2 py-2">
 									Editar
 								</Table.Th>
-								<Table.Th className="px-2 py-2">
-									Eliminar
-								</Table.Th>
+
+								<Can perform="user.destroy">
+									<Table.Th className="px-2 py-2">
+										Eliminar
+									</Table.Th>
+								</Can>
 							</Table.Tr>
 						</Table.Tbody>
 						<Table.Tbody>

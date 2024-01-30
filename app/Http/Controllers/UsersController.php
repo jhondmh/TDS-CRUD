@@ -15,6 +15,10 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('can:user.index')->only('index');
+        $this->middleware('can:user.store')->only('store');
+        $this->middleware('can:user.update')->only('update');
+        $this->middleware('can:user.Destroy')->only('Destroy');
+        $this->middleware('can:user.multipleDestroy')->only('multipleDestroy');
     }
 
     public function index()

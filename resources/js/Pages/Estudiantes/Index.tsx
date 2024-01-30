@@ -66,6 +66,8 @@ import ModalHeaderBodyClasses from '../../../css/ModalHeaderBody.module.css';
 import dataDepartamentos from '../../Datos/DataDepartamentos';
 import dataProvincias from '../../Datos/DataProvincias';
 
+import Can from '@/Components/Can';
+
 interface RowData {
 	name: string;
 	paternal: string;
@@ -1051,12 +1053,14 @@ export default function Dashboard(props) {
 					[TableSelectionClasses.rowSelected]: selected,
 				})}
 			>
-				<Table.Td>
-					<Checkbox
-						checked={selection.includes(estudiante.id)}
-						onChange={() => toggleRow(estudiante.id)}
-					/>
-				</Table.Td>
+				<Can perform="estudiantes.multipleDestroy">
+					<Table.Td>
+						<Checkbox
+							checked={selection.includes(estudiante.id)}
+							onChange={() => toggleRow(estudiante.id)}
+						/>
+					</Table.Td>
+				</Can>
 				<Table.Td>{i + 1}</Table.Td>
 				<Table.Td style={{ whiteSpace: 'nowrap' }}>
 					{capitalizeWords(estudiante.user.name)}
@@ -1079,49 +1083,53 @@ export default function Dashboard(props) {
 				<Table.Td>{formatGrade(estudiante.nota2)}</Table.Td>
 				<Table.Td>{formatGrade(estudiante.nota3)}</Table.Td>
 
-				<Table.Td>
-					<div className="flex justify-center items-center w-full h-full">
-						<WarningButton
-							onClick={() =>
-								openModal(
-									2,
+				<Can perform="estudiantes.update">
+					<Table.Td>
+						<div className="flex justify-center items-center w-full h-full">
+							<WarningButton
+								onClick={() =>
+									openModal(
+										2,
 
-									estudiante.id,
-									// estudiante.user.id,
-									// estudiante.user.user_id,
-									estudiante.user.name,
-									estudiante.user.paternal,
-									estudiante.user.maternal,
-									estudiante.user.fecha_nac,
-									estudiante.user.departamento,
-									estudiante.user.provincia,
-									estudiante.user.distrito,
-									estudiante.user.current_address,
-									estudiante.user.dni,
-									estudiante.user.email,
-									estudiante.user.password,
-									estudiante.nota1,
-									estudiante.nota2,
-									estudiante.nota3,
-								)
-							}
-						>
-							<i className="fa-solid fa-pen-to-square"></i>
-						</WarningButton>
-					</div>
-				</Table.Td>
+										estudiante.id,
+										// estudiante.user.id,
+										// estudiante.user.user_id,
+										estudiante.user.name,
+										estudiante.user.paternal,
+										estudiante.user.maternal,
+										estudiante.user.fecha_nac,
+										estudiante.user.departamento,
+										estudiante.user.provincia,
+										estudiante.user.distrito,
+										estudiante.user.current_address,
+										estudiante.user.dni,
+										estudiante.user.email,
+										estudiante.user.password,
+										estudiante.nota1,
+										estudiante.nota2,
+										estudiante.nota3,
+									)
+								}
+							>
+								<i className="fa-solid fa-pen-to-square"></i>
+							</WarningButton>
+						</div>
+					</Table.Td>
+				</Can>
 
-				<Table.Td>
-					<div className="flex justify-center items-center w-full h-full">
-						<DangerButton
-							onClick={() =>
-								eliminar(estudiante.id, estudiante.name)
-							}
-						>
-							<i className="fa-solid fa-trash"></i>
-						</DangerButton>
-					</div>
-				</Table.Td>
+				<Can perform="estudiantes.destroy">
+					<Table.Td>
+						<div className="flex justify-center items-center w-full h-full">
+							<DangerButton
+								onClick={() =>
+									eliminar(estudiante.id, estudiante.name)
+								}
+							>
+								<i className="fa-solid fa-trash"></i>
+							</DangerButton>
+						</div>
+					</Table.Td>
+				</Can>
 			</Table.Tr>
 		);
 	});
@@ -1220,14 +1228,18 @@ export default function Dashboard(props) {
 		>
 			<div className="bg-dark grid v-screen place-items-center pt-6">
 				<div className="mt-3 mb-3 flex justify-end space-x-4">
-					<PrimaryButton onClick={() => openModal(1)}>
-						<i className="fa-solid fa-circle-plus mr-2"></i>
-						Añadir
-					</PrimaryButton>
+					<Can perform="estudiantes.store">
+						<PrimaryButton onClick={() => openModal(1)}>
+							<i className="fa-solid fa-circle-plus mr-2"></i>
+							Añadir
+						</PrimaryButton>
+					</Can>
 
-					<PrimaryButton onClick={eliminarMultiples}>
-						Eliminar seleccionados
-					</PrimaryButton>
+					<Can perform="estudiantes.multipleDestroy">
+						<PrimaryButton onClick={eliminarMultiples}>
+							Eliminar seleccionados
+						</PrimaryButton>
+					</Can>
 				</div>
 
 				<div className="mt-6 w-2/4">
@@ -1282,24 +1294,26 @@ export default function Dashboard(props) {
 							})}
 						>
 							<Table.Tr>
-								<Table.Th
-									style={{
-										width: rem(40),
-									}}
-								>
-									<Checkbox
-										onChange={toggleAll}
-										checked={
-											selection.length ===
-											estudiantes.length
-										}
-										indeterminate={
-											selection.length > 0 &&
-											selection.length !==
+								<Can perform="estudiantes.multipleDestroy">
+									<Table.Th
+										style={{
+											width: rem(40),
+										}}
+									>
+										<Checkbox
+											onChange={toggleAll}
+											checked={
+												selection.length ===
 												estudiantes.length
-										}
-									/>
-								</Table.Th>
+											}
+											indeterminate={
+												selection.length > 0 &&
+												selection.length !==
+													estudiantes.length
+											}
+										/>
+									</Table.Th>
+								</Can>
 								<Table.Th className="px-2 py-2">#</Table.Th>
 								<Th
 									sorted={sortBy === 'name'}
@@ -1402,12 +1416,17 @@ export default function Dashboard(props) {
 									Nota 3
 								</Th>
 
-								<Table.Th className="px-2 py-2">
-									Editar
-								</Table.Th>
-								<Table.Th className="px-2 py-2">
-									Eliminar
-								</Table.Th>
+								<Can perform="estudiantes.update">
+									<Table.Th className="px-2 py-2">
+										Editar
+									</Table.Th>
+								</Can>
+
+								<Can perform="estudiantes.destroy">
+									<Table.Th className="px-2 py-2">
+										Eliminar
+									</Table.Th>
+								</Can>
 							</Table.Tr>
 						</Table.Tbody>
 						{/* </Table.Thead> */}
