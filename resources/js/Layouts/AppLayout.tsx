@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/core';
 import { Link, Head } from '@inertiajs/react';
 import classNames from 'classnames';
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useState, useEffect } from 'react';
 import useRoute from '@/Hooks/useRoute';
 import useTypedPage from '@/Hooks/useTypedPage';
 import ApplicationMark from '@/Components/ApplicationMark';
@@ -14,6 +14,15 @@ import { Team } from '@/types';
 
 // import { useAuth } from '@/Contexts/AuthContext';
 import Can from '@/Components/Can';
+
+import { useDispatch } from 'react-redux';
+import { usePage } from '@inertiajs/react';
+import {
+	setUser,
+	setRoles,
+	setPermissions,
+	logoutt,
+} from '../store/features/auth/authSlice';
 
 // import { Image } from '@mantine/core';
 // import logo from '/resources/images/LogoUNAP.png';
@@ -36,6 +45,17 @@ export default function AppLayout({
 	children,
 }: PropsWithChildren<Props>) {
 	const page = useTypedPage();
+	const dispatch = useDispatch();
+	const { props } = usePage();
+
+	useEffect(() => {
+		if (props.auth.user) {
+			dispatch(setUser(props.auth.user));
+			dispatch(setRoles(props.auth.roles));
+			dispatch(setPermissions(props.auth.permissions));
+		}
+	}, [props.auth]);
+
 	const route = useRoute();
 	const [showingNavigationDropdown, setShowingNavigationDropdown] =
 		useState(false);
@@ -55,6 +75,7 @@ export default function AppLayout({
 
 	function logout(e: React.FormEvent) {
 		e.preventDefault();
+		dispatch(logoutt());
 		router.post(route('logout'));
 	}
 

@@ -8,42 +8,31 @@ use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
-    protected $rootView = 'app';
+    // ... (otros métodos)
 
-    /**
-     * Determine the current asset version.
-     */
-    public function version(Request $request): ?string
-    {
-        return parent::version($request);
-    }
-
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
-            'ziggy' => fn () => [
-                ...(new Ziggy)->toArray(),
-                'location' => $request->url(),
-            ],
-            // Agregar roles y permisos del usuario autenticado
-            'auth' => function () use ($request) {
-                return [
-                    'user' => $request->user() ? $request->user()->only('id', 'name', 'email', 'roleNames', 'permissionNames') : null,
-                    'roles' => optional($request->user())->roleNames ?? [],
-                    'permissions' => optional($request->user())->permissionNames ?? [],
-                ];
+        $user = $request->user();
+
+        // Define roles y permisos como vacíos por defecto
+        $roles = [];
+        $permissions = [];
+
+        if ($user) {
+            // Usar métodos proporcionados por el trait HasRoles
+            $roles = $user->getRoleNames(); // Obtiene los nombres de los roles
+            $permissions = $user->getAllPermissions()->pluck('name'); // Obtiene los nombres de todos los permisos
+        }
+
+        return array_merge(parent::share($request), [
+            'ziggy' => function () {
+                return array_merge((new Ziggy)->toArray(), ['location' => url()->current()]);
             },
-        ];
+            'auth' => [
+                'user' => $user ? $user->only('id', 'name', 'email') : null,
+                'roles' => $roles,
+                'permissions' => $permissions,
+            ],
+        ]);
     }
 }
