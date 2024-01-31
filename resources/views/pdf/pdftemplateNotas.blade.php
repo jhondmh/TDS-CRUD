@@ -812,9 +812,9 @@
     <div class='some-page-wrapper'></div>
     <table class="tabla">
         <tr class="c2">
-            <!-- <td class="c3 tabla-head" colspan="1" rowspan="1">
+            <td class="c3 tabla-head" colspan="1" rowspan="1">
                 <p class="c0">N. </p>
-            </td> -->
+            </td>
             <td class="c3 tabla-head" colspan="1" rowspan="1">
                 <p class="c0"><span class="">Cod</span></p>
             </td>
@@ -842,9 +842,9 @@
       
           @foreach ($notas as $index=>$usuario)
         <tr class="c2 thead">
-            <!-- <td class="c3" colspan="1" rowspan="1">
+            <td class="c3" colspan="1" rowspan="1">
                 <p class="c0"><span class="">{{ ++$index }}</span></p>
-            </td> -->
+            </td>
             <td class="c3" colspan="1" rowspan="1">
                 <p class="c0"><span class=""> {{$usuario->id}}</span></p>
             </td>
