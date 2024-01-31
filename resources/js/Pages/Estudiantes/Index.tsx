@@ -699,6 +699,7 @@ export default function Dashboard(props) {
 				const updatedStudents = [...estudiantes, newStudent];
 				setEstudiantes(updatedStudents);
 				setSortedData(updatedStudents);
+				window.location.reload();
 			} else {
 				// Actualizar un estudiante existente
 				response = await axios.put(
