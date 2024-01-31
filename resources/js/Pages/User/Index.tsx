@@ -498,8 +498,8 @@ export default function Dashboard({ users }: Props) {
 			);
 			ok(
 				'Usuario ' +
-					(operation === 1 ? 'añadido' : 'actualizado') +
-					' con éxito',
+				(operation === 1 ? 'añadido' : 'actualizado') +
+				' con éxito',
 			);
 			closeModal();
 		} catch (error) {
@@ -518,6 +518,7 @@ export default function Dashboard({ users }: Props) {
 
 	const eliminar = (id, name) => {
 		const alerta = Swal.mixin({ buttonsStyling: true });
+		console.log('id es', id)
 		alerta
 			.fire({
 				title: `¿Estás seguro de eliminar el usuario ${name}?`,
@@ -629,7 +630,6 @@ export default function Dashboard({ users }: Props) {
 			);
 			return;
 		}
-
 		const alerta2 = Swal.mixin({ buttonsStyling: true });
 
 		alerta2
@@ -644,11 +644,8 @@ export default function Dashboard({ users }: Props) {
 			})
 			.then(result => {
 				if (result.isConfirmed) {
-					// Usar el método `post` o `put` del hook useForm
-					console.log('seleccion antes de post', selection);
-					console.log('idsToSend antes de post', idsToSend);
 					axios
-						.post(route('estudiantes.multipleDestroy'), {
+						.post(route('users.multipleDestroy'), {
 							ids: idsToSend,
 						})
 						.then(response => {
@@ -657,26 +654,22 @@ export default function Dashboard({ users }: Props) {
 								response.data.success,
 								'success',
 							);
-							// Actualiza el estado local para reflejar la eliminación
+							window.location.reload()
+							// Actualizar el estado local para reflejar la eliminación
 							const updatedData = sortedData.filter(
-								estudiante =>
-									!idsToSend.includes(estudiante.id),
+								estudiantes => !idsToSend.includes(estudiantes.id)
 							);
-							setEstudiantes(updatedData);
-							setSortedData(updatedData);
+							setEstudiantes(updatedData); // Asegúrate de tener una función setUsers definida para actualizar el estado local de los usuarios
 							setSelection([]);
 						})
 						.catch(error => {
 							Swal.fire(
 								'Error',
-								'Ocurrió un error al eliminar los usuario.',
+								'Ocurrió un error al eliminar los usuarios.',
 								'error',
 							);
 						});
 				}
-
-				// console.log('seleccion despues de post', selection);
-				// console.log('idsToSend despues de post', idsToSend);
 			});
 	};
 
@@ -839,7 +832,7 @@ export default function Dashboard({ users }: Props) {
 			return a.toUpperCase();
 		});
 	}
-
+	console.log(estudiantes)
 	return (
 		<AppLayout
 			title="Estudiantes"
@@ -860,7 +853,7 @@ export default function Dashboard({ users }: Props) {
 
 					<Can perform="user.multipleDestroy">
 						<PrimaryButton onClick={eliminarMultiples}>
-							Eliminar seleccionados
+							Eliminar seleccionado
 						</PrimaryButton>
 					</Can>
 				</div>
@@ -922,7 +915,7 @@ export default function Dashboard({ users }: Props) {
 											indeterminate={
 												selection.length > 0 &&
 												selection.length !==
-													estudiantes.length
+												estudiantes.length
 											}
 										/>
 									</Table.Th>
@@ -1025,7 +1018,7 @@ export default function Dashboard({ users }: Props) {
 										colSpan={
 											estudiantes && estudiantes[0]
 												? Object.keys(estudiantes[0])
-														.length
+													.length
 												: 1
 										}
 									>
@@ -1109,7 +1102,7 @@ export default function Dashboard({ users }: Props) {
 									)
 								}
 								spellCheck={false}
-								// className="mt-1 block w-full"
+							// className="mt-1 block w-full"
 							/>
 
 							{/* <InputError
@@ -1138,7 +1131,7 @@ export default function Dashboard({ users }: Props) {
 									)
 								}
 								spellCheck={false}
-								// className="mt-1 block w-full"
+							// className="mt-1 block w-full"
 							/>
 
 							{/* <InputError
@@ -1331,7 +1324,7 @@ export default function Dashboard({ users }: Props) {
 									)
 								}
 								spellCheck={false}
-								// className="mt-1 block w-full"
+							// className="mt-1 block w-full"
 							/>
 						</div>
 
@@ -1354,7 +1347,7 @@ export default function Dashboard({ users }: Props) {
 								}
 								maxLength={8}
 								spellCheck={false}
-								// className="mt-1 block w-full"
+							// className="mt-1 block w-full"
 							/>
 
 							{/* <InputError
@@ -1381,7 +1374,7 @@ export default function Dashboard({ users }: Props) {
 									form.setFieldValue('email', e.target.value)
 								}
 								spellCheck={false}
-								// className="mt-1 block w-full"
+							// className="mt-1 block w-full"
 							/>
 
 							{/* <InputError

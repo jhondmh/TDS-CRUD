@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 class EstudiantesController extends Controller
 {
 
@@ -32,36 +33,41 @@ class EstudiantesController extends Controller
             'estudiantes' => $estudiantes
         ]);
     }
-
     public function store(Request $request)
     {
+        // Validar y agregar un nuevo usuario
         $request->validate([
-            'user_id' => 'required|exists:users,id',
-            // 'nombre' => 'required|max:25',
-            // 'apellido_pat' => 'required|max:15',
-            // 'apellido_mat' => 'required|max:15',
-            // 'fecha_nac' => 'required|date|after:1950-01-01|before_or_equal:today',
-            // 'nota1' => 'required|integer|between:0,20',
-            // 'nota2' => 'required|integer|between:0,20',
-            // 'nota3' => 'required|integer|between:0,20',
+            'name' => ['required', 'string', 'max:25', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'paternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'maternal' => ['required', 'string', 'max:15', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'fecha_nac' => ['required', 'date', 'after:1950-01-01', 'before_or_equal:today'],
+            'departamento' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'provincia' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'distrito' => ['required', 'string', 'max:30', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/'],
+            'current_address' => ['required', 'string', 'max:70', 'regex:/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,()-]+$/'],
+
+            'dni' => ['required', 'size:8', 'regex:/^[0-9]+$/', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:40', 'unique:users'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = new User($request->only('name', 'paternal', 'maternal', 'fecha_nac', 'departamento', 'provincia', 'distrito', 'current_address', 'dni', 'email'));
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Validar y agregar un nuevo estudiante
+        $request->validate([
             'nota1' => 'sometimes|nullable|integer|between:0,20',
             'nota2' => 'sometimes|nullable|integer|between:0,20',
             'nota3' => 'sometimes|nullable|integer|between:0,20',
-
-            // 'departamento' => 'required|max:25',
         ]);
-        // $estudiante = new Estudiantes($request->input());
+
         $estudiante = new Estudiantes($request->only(['user_id', 'nota1', 'nota2', 'nota3']));
-
+        $estudiante->user_id = $user->id; // Asignar el ID del usuario recién creado
         $estudiante->save();
-        // return redirect('estudiantes');
 
-        // Devuelve una respuesta Inertia con el estudiante recién creado
-        // return Inertia::render('Estudiantes/Index', [
-        //     'estudiante' => $estudiante,
-        //     'estudiantes' => Estudiantes::all() // Opcional: devuelve también la lista actualizada
-        // ]);
-        return response()->json(['estudiante' => $estudiante]);
+        // Devolver una respuesta de éxito
+        return response()->json(['user' => $user, 'estudiante' => $estudiante]);
     }
 
     public function update(Request $request, $id)

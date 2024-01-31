@@ -88,40 +88,32 @@ class UsersController extends Controller
     }
 
     public function destroy($id)
-    {
-        Log::info("Método destroy llamado con ID: $id");
-        $user = User::find($id);
-        $user->delete();
-        // return redirect('users');
+{
+    Log::info("Método destroy llamado con ID: $id");
+    $user = User::find($id);
 
-        return response()->json(['user' => $user]);
+    if (!$user) {
+        return response()->json(['error' => 'Usuario no encontrado.'], 404);
     }
 
-    public function multipleDestroy(Request $request)
-    {
-        // Log::info("Método multipleDestroy llamado");
-        $ids = $request->input('ids');
+    $user->delete();
 
-        if ($ids === null || count($ids) === 0) {
-            return response()->json(['error' => 'No se proporcionaron IDs válidos.'], 400);
-            // return redirect()->back()->with('error', 'No se proporcionaron IDs válidos.');
-        }
+    return response()->json(['success' => 'Usuario eliminado con éxito.']);
+}
 
+public function multipleDestroy(Request $request)
+{
+    $ids = $request->input('ids');
 
-        // DB::beginTransaction();
-        try {
-            User::whereIn('id', $ids)->delete();
-            // $users = User::all(); // Recuperar datos actualizados
-            // DB::commit();
-            return response()->json(['success' => 'User eliminados con éxito.']);
-            // return redirect('users');
-            // return response()->json(['success' => 'User eliminados con éxito.']);
-            // return Inertia::render('User/Index', ['users' => $users]);
-        } catch (\Exception $e) {
-            // DB::rollBack();
-            // Log::error("Error al eliminar users: " . $e->getMessage());
-            // return response()->json(['error' => 'Error al eliminar users.'], 500);
-            return response()->json(['error' => 'Error al eliminar users.'], 500);
-        }
+    if (empty($ids)) {
+        return response()->json(['error' => 'No se proporcionaron IDs válidos.'], 400);
     }
+
+    try {
+        User::whereIn('id', $ids)->delete();
+        return response()->json(['success' => 'Usuarios eliminados con éxito.']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al eliminar usuarios.'], 500);
+    }
+}
 }

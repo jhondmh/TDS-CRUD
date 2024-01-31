@@ -44,6 +44,7 @@ Route::middleware([
     // Route::delete('/estudiantes/multiple-delete', [EstudiantesController::class, 'multipleDestroy']);
     // Route::delete('/estudiantes/{estudiante}', [EstudiantesController::class, 'destroy'])->name('estudiantes.destroy');
     Route::post('/estudiantes/multiple-destroy', [EstudiantesController::class, 'multipleDestroy'])->name('estudiantes.multipleDestroy');
+    Route::post('/users/multiple-destroy', [UsersController::class, 'multipleDestroy'])->name('users.multipleDestroy');
     // Route::post('/estudiantes/multiple-destroy', [EstudiantesController::class, 'multipleDestroy'])->middleware(['auth:sanctum', 'verified'])->name('estudiantes.multipleDestroy');
 
 
