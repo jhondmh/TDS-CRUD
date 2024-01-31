@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\EstudiantesController;
 use App\Http\Controllers\UsersController;
-
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\FacebookController;
 
@@ -44,7 +44,6 @@ Route::middleware([
     // Route::delete('/estudiantes/multiple-delete', [EstudiantesController::class, 'multipleDestroy']);
     // Route::delete('/estudiantes/{estudiante}', [EstudiantesController::class, 'destroy'])->name('estudiantes.destroy');
     Route::post('/estudiantes/multiple-destroy', [EstudiantesController::class, 'multipleDestroy'])->name('estudiantes.multipleDestroy');
-    Route::post('/users/multiple-destroy', [UsersController::class, 'multipleDestroy'])->name('users.multipleDestroy');
     // Route::post('/estudiantes/multiple-destroy', [EstudiantesController::class, 'multipleDestroy'])->middleware(['auth:sanctum', 'verified'])->name('estudiantes.multipleDestroy');
 
 
@@ -72,3 +71,8 @@ route::get('auth/google/callback', [GoogleController::class, 'googlecallback']);
 
 route::get('auth/facebook', [FacebookController::class, 'facebookpage']);
 route::get('auth/facebook/callback', [FacebookController::class, 'facebookredirect']);
+
+
+
+route::get('pdf/usuarios',[PDFController::class ,'createUsersPdf']);
+route::get('pdf/notas',[PDFController::class ,'createNotaspdf']);
