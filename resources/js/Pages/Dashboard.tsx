@@ -13,6 +13,7 @@ import {
 } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
+import { Button } from '@mantine/core';
 
 ChartJS.register(
     CategoryScale,
@@ -105,9 +106,15 @@ const DashboardPrueba: React.FC = () => {
         <AppLayout
             title="Dashboard"
             renderHeader={() => (
-                <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                    Dashboard de prueba
-                </h2>
+                <div className='flex justify-around'>
+                    <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                        Dashboard
+                    </h2>
+                    <Button component="a" size="md" href="https://tdslaravelreact.xyz/pdf/notas" target="_blank">
+                        Generar Reporte
+                    </Button>
+                </div>
+
             )}
         >
             <div className="py-12">
