@@ -802,7 +802,7 @@
         <p class="c7 c9"><span class="c1">&nbsp;</span></p>
     </div>
     <div class="dim">
-        <p class="c20"><span class="c3">Lista de notas:</span></p>
+        <p class="c20"><span class="c3">Lista de usuarios:</span></p>
         <!-- <p class="c4"><span class="c3"></span></p> -->
         <!-- <p class="c10"><span class="c3">HACE CONSTAR:</span></p> -->
         <p class="c4"><span class="c0"></span></p>
