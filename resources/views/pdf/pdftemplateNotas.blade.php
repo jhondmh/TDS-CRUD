@@ -3,7 +3,7 @@
 
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="content-type">
-    <title>Academia de programacion extrema - Lista de notas</title>
+    <title>Academia wawitas del saber - Lista de notas</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 
@@ -792,18 +792,17 @@
 
 <body class="c14 doc-content">
     <div>
-    <img alt="" src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/unap.png'))) }}"  style="width: 60px; height: 60px;  position: absolute; top:0; left:0" title="">
-        <img alt="" src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/epis.png'))) }}"  style="width: 60px; height: 60px;  position: absolute; top:0; right:0" title="">
+    <img alt="" src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/icono.png'))) }}"  style="width: 60px; height: 60px;  position: absolute; top:0; left:0" title="">
 
-        <p class="c9"><span class="c1">UNIVERSIDAD NACIONAL DEL ALTIPLANO</span></p>
-        <p class="c9"><span class="c1">FACULTAD DE INGENIERIA MECANICA ELECTRICA, ELECTRONICA Y SISTEMAS</span></p>
-        <p class="c9"><span class="c1">ESCUELA PROFESIONAL DE INGENIER&Iacute;A DE SISTEMAS</span></p>
+    <p class="c9"><span class="c1">&nbsp;</span></p>
+        <p class="c9"><span class="c1">ACADEMIA PRE UNIVERSITARIA WAWITAS DEL SABER</span></p>
+        <p class="c9"><span class="c1">Av. Las Palmeras, Los Olivos 15304, Peru, Lima, Provincia de Lima. Q3.</span></p>
+        <p class="c9"><span class="c1">Cel. (+51) 9347252651 / 962461514</span></p>
         <br>
-        <p class="c9"><span class="c1">ACADEMIA DE PROGRAMACION COMPETITIVA EN COBOL Y PASCAL</span></p>
-        <p class="c7 c9"><span class="c1"></span></p>
+        <p class="c7 c9"><span class="c1">&nbsp;</span></p>
     </div>
     <div class="dim">
-        <p class="c20"><span class="c3">Lista de notas de los estudiantes de la gran academia de programacion extrema</span></p>
+        <p class="c20"><span class="c3">Lista de notas:</span></p>
         <!-- <p class="c4"><span class="c3"></span></p> -->
         <!-- <p class="c10"><span class="c3">HACE CONSTAR:</span></p> -->
         <p class="c4"><span class="c0"></span></p>
@@ -815,9 +814,9 @@
             <td class="c3 tabla-head" colspan="1" rowspan="1">
                 <p class="c0">N. </p>
             </td>
-            <td class="c3 tabla-head" colspan="1" rowspan="1">
+            <!-- <td class="c3 tabla-head" colspan="1" rowspan="1">
                 <p class="c0"><span class="">Cod</span></p>
-            </td>
+            </td> -->
             <td class="c3 tabla-head" colspan="1" rowspan="1">
                 <p class="c0"><span class="">Nombre</span></p>
             </td>
@@ -845,9 +844,9 @@
             <td class="c3" colspan="1" rowspan="1">
                 <p class="c0"><span class="">{{ ++$index }}</span></p>
             </td>
-            <td class="c3" colspan="1" rowspan="1">
+            <!-- <td class="c3" colspan="1" rowspan="1">
                 <p class="c0"><span class=""> {{$usuario->id}}</span></p>
-            </td>
+            </td> -->
             <td class="c3" colspan="1" rowspan="1">
                 <p class="c0"><span class=""> {{$usuario->name}} </span></p>
             </td>
@@ -873,7 +872,7 @@
 
 
     <p class="c4"><span class="c0"></span></p>
-    <p class="c20" style="text-align: right;"><span class="c0">Academa de programacion Extrema 2024.</span></p>
+    <p class="c20" style="text-align: right;"><span class="c0">Academa pre universitaria Wawitas del saber - 2024.</span></p>
     <p class="c4"><span class="c0"></span></p>
 
     <table class="libro-firma"></table>
