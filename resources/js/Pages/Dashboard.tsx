@@ -110,7 +110,7 @@ const DashboardPrueba: React.FC = () => {
                     <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Dashboard
                     </h2>
-                    <Button component="a" size="md" href="https://tdslaravelreact.xyz/pdf/notas" target="_blank">
+                    <Button component="a" size="md" href="https://academia.tdslaravelreact.xyz/pdf/notas" target="_blank">
                         Generar Reporte
                     </Button>
                 </div>
